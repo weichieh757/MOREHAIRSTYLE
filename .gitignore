@@ -9,11 +9,11 @@ __pycache__/
 venv/
 .env
 
-# Database and Data
-*.db
-*.sqlite3
-inventory.xlsx
+# Database and Data (Enabled for Demo)
+# *.db
+# *.sqlite3
+# inventory.xlsx
 
-# Uploads
-uploads/
-上傳/
+# Uploads (Enabled for Demo)
+# uploads/
+# 上傳/
