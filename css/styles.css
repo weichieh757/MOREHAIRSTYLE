@@ -99,6 +99,19 @@ nav a:hover {
     color: #ccc;
 }
 
+/* 特別的導覽按鈕 (如碳酸泉) */
+.btn-nav {
+    border: 1px solid white;
+    padding: 5px 15px;
+    border-radius: 20px;
+    transition: all 0.3s;
+}
+
+.btn-nav:hover {
+    background: white;
+    color: var(--accent) !important;
+}
+
 /* Cart Count */
 .cart-count {
     background: #e74c3c;
