@@ -12,12 +12,18 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css">
+    <style>
+        /* 針對新網站的微調 */
+        header {
+            justify-content: space-between;
+        }
+    </style>
 </head>
 
 <body>
-    <!-- Header (與首頁一致，但 class="spread" 讓左右分開) -->
+    <!-- Header -->
     <header class="spread">
-        <h1><a href="MOindex.html">MOMO HAIRSTYLE</a></h1>
+        <h1><a href="#">日本頂級碳酸泉</a></h1>
 
         <!-- 漢堡按鈕 -->
         <div class="hamburger">
@@ -28,9 +34,8 @@
 
         <nav>
             <ul class="mobile-menu">
-                <li><a href="MOindex.html">← 回首頁</a></li>
-                <li><a href="MOindex.html?cat=all">所有商品</a></li>
-                <li><a href="MOcart.html">🛒 購物車 <span id="cart-count" class="cart-count">0</span></a></li>
+                <!-- 連結回主網站: 部署後請修改此連結 -->
+                <li><a href="https://momo-hairstyle.onrender.com" class="btn-nav">← 回到 MOMO 髮廊官網</a></li>
             </ul>
         </nav>
     </header>
@@ -42,8 +47,9 @@
         <div
             style="position: relative; border-radius: 12px; overflow: hidden; margin-bottom: 3rem; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
             <picture class="bg-media" style="position: relative; height: 400px; display: block;">
-                <source media="(max-width: 768px)" srcset="/uploads/aqua_m.jpg">
-                <img src="/uploads/aqua.jpg" alt="日本頂級碳酸泉" style="width: 100%; height: 100%; object-fit: cover;">
+                <!-- 使用相對路徑 -->
+                <source media="(max-width: 768px)" srcset="uploads/aqua_m.jpg">
+                <img src="uploads/aqua.jpg" alt="日本頂級碳酸泉" style="width: 100%; height: 100%; object-fit: cover;">
             </picture>
             <div class="overlay" style="background: rgba(0,0,0,0.4);"></div>
             <div
@@ -83,19 +89,13 @@
 
             <div style="text-align: center; margin-top: 4rem;">
                 <p style="margin-bottom: 1.5rem; font-weight: bold;">想要親身體驗碳酸泉的神奇魅力嗎？</p>
-                <a href="MOindex.html" class="btn-buy"
-                    style="padding: 1rem 3rem; font-size: 1.2rem; display: inline-block;">立即預約 / 查看相關產品</a>
+                <a href="https://momo-hairstyle.onrender.com" class="btn-buy"
+                    style="padding: 1rem 3rem; font-size: 1.2rem; display: inline-block;">立即預約體驗</a>
             </div>
         </article>
     </div>
 
     <script>
-        function updateCartCount() {
-            const cart = JSON.parse(localStorage.getItem('momoCart')) || [];
-            const count = cart.reduce((sum, item) => sum + item.quantity, 0);
-            document.getElementById('cart-count').innerText = count;
-        }
-
         // 漢堡選單邏輯
         const hamburger = document.querySelector('.hamburger');
         const navUl = document.querySelector('nav ul');
@@ -106,8 +106,6 @@
                 navUl.classList.toggle('active');
             });
         }
-
-        updateCartCount();
     </script>
 </body>
 
