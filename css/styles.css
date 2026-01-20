@@ -54,13 +54,14 @@ header {
     padding: 0 1.5rem;
     height: 80px;
     display: flex;
-    justify-content: flex-end; /* Default for desktop with full nav */
+    justify-content: flex-end;
+    /* Default for desktop with full nav */
     align-items: center;
     position: sticky;
     top: 0;
     z-index: 1000;
     backdrop-filter: blur(5px);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 /* For pages where header content is spread out (like Cart) */
@@ -143,7 +144,7 @@ nav a:hover {
     .hamburger {
         display: flex;
     }
-    
+
     /* Only apply side menu style if it is a list (index page) */
     nav ul.mobile-menu {
         position: fixed;
@@ -172,11 +173,11 @@ nav a:hover {
     .hamburger.active span:nth-child(1) {
         transform: rotate(45deg) translate(5px, 6px);
     }
-    
+
     .hamburger.active span:nth-child(2) {
         opacity: 0;
     }
-    
+
     .hamburger.active span:nth-child(3) {
         transform: rotate(-45deg) translate(5px, -6px);
     }
@@ -254,7 +255,9 @@ nav a:hover {
     overflow: hidden;
 }
 
-.bg-video {
+/* [影片] 絕對定位，確保永遠填滿區塊且不變形 */
+.bg-video,
+.bg-media {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -265,6 +268,13 @@ nav a:hover {
     transform: translate(-50%, -50%);
     object-fit: cover;
     z-index: 0;
+}
+
+.bg-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
 }
 
 .overlay {
@@ -310,8 +320,10 @@ nav a:hover {
 
 @media (max-width: 768px) {
     .story-section {
-        background-attachment: scroll; /* Performance adjust */
+        background-attachment: scroll;
+        /* Performance adjust */
     }
+
     .story-title {
         font-size: 2rem;
     }
@@ -394,7 +406,10 @@ nav a:hover {
     font-size: 1rem;
 }
 
-.btn-buy, .btn-submit, .checkout-btn, .btn-add {
+.btn-buy,
+.btn-submit,
+.checkout-btn,
+.btn-add {
     background: rgb(2, 80, 119);
     color: white;
     border: none;
@@ -407,7 +422,10 @@ nav a:hover {
     display: inline-block;
 }
 
-.btn-buy:hover, .btn-submit:hover, .checkout-btn:hover, .btn-add:hover {
+.btn-buy:hover,
+.btn-submit:hover,
+.checkout-btn:hover,
+.btn-add:hover {
     background: var(--accent);
 }
 
@@ -427,12 +445,14 @@ nav a:hover {
     border-radius: 10px;
     display: flex;
     gap: 2rem;
-    flex-wrap: nowrap; /* Desktop: side by side */
+    flex-wrap: nowrap;
+    /* Desktop: side by side */
 }
 
 @media (max-width: 768px) {
     .detail-card {
-        flex-wrap: wrap; /* Mobile: stack */
+        flex-wrap: wrap;
+        /* Mobile: stack */
         flex-direction: column;
         padding: 1rem;
     }
@@ -440,7 +460,8 @@ nav a:hover {
 
 .slideshow-container {
     flex: 1;
-    min-width: 300px; /* Minimum width before breaking */
+    min-width: 300px;
+    /* Minimum width before breaking */
     position: relative;
     border-radius: 10px;
     overflow: hidden;
@@ -456,10 +477,22 @@ nav a:hover {
     animation: fade 0.8s;
 }
 
-.active-slide { display: block; }
-@keyframes fade { from {opacity: .4} to {opacity: 1} }
+.active-slide {
+    display: block;
+}
 
-.prev, .next {
+@keyframes fade {
+    from {
+        opacity: .4
+    }
+
+    to {
+        opacity: 1
+    }
+}
+
+.prev,
+.next {
     cursor: pointer;
     position: absolute;
     top: 50%;
@@ -475,8 +508,16 @@ nav a:hover {
     background-color: rgba(0, 0, 0, 0.3);
     z-index: 2;
 }
-.next { right: 0; border-radius: 3px 0 0 3px; }
-.prev:hover, .next:hover { background-color: rgba(0, 0, 0, 0.8); }
+
+.next {
+    right: 0;
+    border-radius: 3px 0 0 3px;
+}
+
+.prev:hover,
+.next:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+}
 
 .dot-container {
     position: absolute;
@@ -497,7 +538,8 @@ nav a:hover {
     transition: background-color 0.6s ease;
 }
 
-.active-dot, .dot:hover {
+.active-dot,
+.dot:hover {
     background-color: white;
     transform: scale(1.2);
 }
@@ -509,8 +551,17 @@ nav a:hover {
     justify-content: center;
 }
 
-.variant-group { margin-bottom: 1.5rem; }
-.variant-title { font-weight: bold; margin-bottom: 8px; display: block; color: #555; }
+.variant-group {
+    margin-bottom: 1.5rem;
+}
+
+.variant-title {
+    font-weight: bold;
+    margin-bottom: 8px;
+    display: block;
+    color: #555;
+}
+
 .variant-btn {
     padding: 8px 15px;
     border: 1px solid #ccc;
@@ -521,9 +572,22 @@ nav a:hover {
     margin-bottom: 10px;
     transition: 0.2s;
 }
-.variant-btn:hover { border-color: var(--accent); }
-.variant-btn.selected { background: var(--accent); color: white; border-color: var(--accent); }
-.variant-btn.disabled { opacity: 0.5; cursor: not-allowed; background: #f9f9f9; }
+
+.variant-btn:hover {
+    border-color: var(--accent);
+}
+
+.variant-btn.selected {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+}
+
+.variant-btn.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: #f9f9f9;
+}
 
 /* ========================================== */
 /* ✨ Cart Page ✨ */
@@ -625,14 +689,16 @@ td {
 
 /* Cart Responsive */
 @media (max-width: 600px) {
-    .cart-container { padding: 1rem; }
-    
+    .cart-container {
+        padding: 1rem;
+    }
+
     td {
         display: block;
         text-align: center;
         width: 100%;
     }
-    
+
     td::before {
         /* Optional: Add labels for data if needed via data-label attribute */
         content: attr(data-label);
@@ -640,13 +706,21 @@ td {
         font-weight: bold;
     }
 
-    th { display: none; }
+    th {
+        display: none;
+    }
 
-    .cart-product-img { margin-bottom: 10px; }
-    
-    .qty-control { justify-content: center; }
-    
-    .total-area { text-align: center; }
+    .cart-product-img {
+        margin-bottom: 10px;
+    }
+
+    .qty-control {
+        justify-content: center;
+    }
+
+    .total-area {
+        text-align: center;
+    }
 }
 
 /* ========================================== */
@@ -660,7 +734,9 @@ td {
     margin-bottom: 2rem;
 }
 
-input[type="text"], input[type="number"], textarea {
+input[type="text"],
+input[type="number"],
+textarea {
     width: 100%;
     padding: 10px;
     border: 1px solid #ccc;
