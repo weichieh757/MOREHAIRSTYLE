@@ -3,10 +3,10 @@
 /* ========================================== */
 :root {
     --primary: #000;
-    --accent: #0250c7;
+    --accent: rgb(34,57,90);
     --accent-dark: #0000a9;
     --bg: #f4f4f4;
-    --header-bg: #0250c7;
+    --header-bg: rgb(34,57,90);
     --text-color: #333;
     --card-bg: #fff;
 }
