@@ -271,6 +271,26 @@ def get_images():
                 images.append(f"/uploads/{filename}")
     return jsonify(images)
 
+@app.route('/api/images', methods=['DELETE'])
+def delete_image():
+    filename = request.args.get('filename')
+    if not filename:
+        return jsonify({'error': 'Filename is required'}), 400
+    
+    # 安全性檢查：雖然 filename 應該只是檔名，但防範路徑遍歷
+    filename = os.path.basename(filename)
+    file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    
+    if os.path.exists(file_path):
+        try:
+            os.remove(file_path)
+            return jsonify({'status': 'deleted'})
+        except Exception as e:
+            print(f"Error deleting file: {e}")
+            return jsonify({'error': 'Failed to delete file'}), 500
+    else:
+        return jsonify({'error': 'File not found'}), 404
+
 # --- 7. 顯示圖片 (Static Files) ---
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):

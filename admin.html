@@ -434,90 +434,179 @@
             cursor: pointer;
             font-size: 1rem;
         }
+
+        /* ✨ 分頁籤 (Tabs) 樣式 ✨ */
+        .tab-nav {
+            display: flex;
+            border-bottom: 2px solid #ddd;
+            margin-bottom: 20px;
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-size: 1rem;
+            color: #666;
+            border-bottom: 3px solid transparent;
+            font-weight: bold;
+        }
+
+        .tab-btn.active {
+            color: rgb(2, 80, 119);
+            border-bottom-color: rgb(2, 80, 119);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .gallery-delete-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: rgba(231, 76, 60, 0.9);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            z-index: 10;
+        }
+
+        .gallery-delete-btn:hover {
+            background: #c0392b;
+        }
     </style>
 </head>
 
 <body>
 
     <div class="container" id="mainContainer">
-        <h1 id="formTitle">新增商品</h1>
+        <h1 id="pageTitle">後台管理系統</h1>
 
-        <form id="uploadForm">
-            <input type="hidden" id="editId">
+        <!-- ✨ 分頁籤導覽 ✨ -->
+        <div class="tab-nav">
+            <button class="tab-btn active" onclick="switchTab('tab-products')">📦 商品管理</button>
+            <button class="tab-btn" onclick="switchTab('tab-orders')">📝 訂單管理</button>
+            <button class="tab-btn" onclick="switchTab('tab-gallery')">🖼️ 圖片庫管理</button>
+        </div>
 
-            <div class="form-group">
-                <label>商品名稱</label>
-                <input type="text" name="name" id="pName" required>
-            </div>
+        <!-- ✨ 1. 商品管理分頁 ✨ -->
+        <div id="tab-products" class="tab-content active">
+            <h2 id="formTitle" style="border-left:5px solid rgb(2, 80, 119); padding-left:10px;">新增商品</h2>
 
-            <div class="form-group">
-                <label>基本價格 (顯示用)</label>
-                <input type="number" name="price" id="pPrice" required>
-            </div>
+            <form id="uploadForm">
+                <input type="hidden" id="editId">
 
-            <div class="form-group">
-                <label>多規格選項 (可設定單層或雙層)</label>
-                <div class="variant-box">
-                    <div class="variant-header">
-                        <span style="flex:2">規格一 (如:功能/顏色)</span>
-                        <span style="flex:2">規格二 (如:大小/容量) *選填</span>
-                        <span style="flex:1">價格</span>
-                        <span style="width:45px"></span>
+                <div class="form-group">
+                    <label>商品名稱</label>
+                    <input type="text" name="name" id="pName" required>
+                </div>
+
+                <div class="form-group">
+                    <label>基本價格 (顯示用)</label>
+                    <input type="number" name="price" id="pPrice" required>
+                </div>
+
+                <div class="form-group">
+                    <label>多規格選項 (可設定單層或雙層)</label>
+                    <div class="variant-box">
+                        <div class="variant-header">
+                            <span style="flex:2">規格一 (如:功能/顏色)</span>
+                            <span style="flex:2">規格二 (如:大小/容量) *選填</span>
+                            <span style="flex:1">價格</span>
+                            <span style="width:45px"></span>
+                        </div>
+                        <div id="variantList"></div>
+                        <button type="button" class="btn-add-variant" onclick="addVariantRow()">+ 新增規格</button>
                     </div>
-                    <div id="variantList"></div>
-                    <button type="button" class="btn-add-variant" onclick="addVariantRow()">+ 新增規格</button>
                 </div>
-            </div>
 
-            <div class="form-group">
-                <label>分類 (可複選)</label>
-                <div class="checkbox-group">
-                    <label class="checkbox-label"><input type="checkbox" name="category" value="洗髮"> 洗髮</label>
-                    <label class="checkbox-label"><input type="checkbox" name="category" value="染髮"> 染髮</label>
-                    <label class="checkbox-label"><input type="checkbox" name="category" value="燙髮"> 燙髮</label>
-                    <label class="checkbox-label"><input type="checkbox" name="category" value="保養"> 保養</label>
-                    <label class="checkbox-label"><input type="checkbox" name="category" value="煥采"> 煥采</label>
-                    <label class="checkbox-label"><input type="checkbox" name="category" value="活萃"> 活萃</label>
-                    <label class="checkbox-label"><input type="checkbox" name="category" value="R.O.8"> R.O.8</label>
-                    <label class="checkbox-label"><input type="checkbox" name="category" value="S.I.G"> S.I.G</label>
-                    <label class="checkbox-label"><input type="checkbox" name="category" value="日本"> 日本</label>
-                    <label class="checkbox-label"><input type="checkbox" name="category" value="韓國"> 韓國</label>
-                    <label class="checkbox-label"><input type="checkbox" name="category" value="其他"> 其他</label>
+                <div class="form-group">
+                    <label>分類 (可複選)</label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-label"><input type="checkbox" name="category" value="洗髮"> 洗髮</label>
+                        <label class="checkbox-label"><input type="checkbox" name="category" value="染髮"> 染髮</label>
+                        <label class="checkbox-label"><input type="checkbox" name="category" value="燙髮"> 燙髮</label>
+                        <label class="checkbox-label"><input type="checkbox" name="category" value="保養"> 保養</label>
+                        <label class="checkbox-label"><input type="checkbox" name="category" value="煥采"> 煥采</label>
+                        <label class="checkbox-label"><input type="checkbox" name="category" value="活萃"> 活萃</label>
+                        <label class="checkbox-label"><input type="checkbox" name="category" value="R.O.8">
+                            R.O.8</label>
+                        <label class="checkbox-label"><input type="checkbox" name="category" value="S.I.G">
+                            S.I.G</label>
+                        <label class="checkbox-label"><input type="checkbox" name="category" value="日本"> 日本</label>
+                        <label class="checkbox-label"><input type="checkbox" name="category" value="韓國"> 韓國</label>
+                        <label class="checkbox-label"><input type="checkbox" name="category" value="其他"> 其他</label>
+                    </div>
                 </div>
-            </div>
 
-            <div class="form-group">
-                <label>商品描述</label>
-                <textarea name="description" id="pDesc" rows="3"></textarea>
-            </div>
-
-            <div class="form-group">
-                <label>商品圖片 (新上傳 或 從圖庫選擇)</label>
-                <div style="display: flex; gap: 10px; margin-bottom: 10px;">
-                    <button type="button" class="btn-gallery" onclick="openGallery()">從圖庫選擇</button>
-                    <input type="file" name="photos" id="fileInput" multiple accept="image/*" onchange="previewFiles()"
-                        style="flex-grow: 1;">
+                <div class="form-group">
+                    <label>商品描述</label>
+                    <textarea name="description" id="pDesc" rows="3"></textarea>
                 </div>
+
+                <div class="form-group">
+                    <label>商品圖片 (新上傳 或 從圖庫選擇)</label>
+                    <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                        <button type="button" class="btn-gallery" onclick="openGallery()">從圖庫選擇</button>
+                        <input type="file" name="photos" id="fileInput" multiple accept="image/*"
+                            onchange="previewFiles()" style="flex-grow: 1;">
+                    </div>
+                </div>
+
+                <div id="imagePositionEditor">
+                    <div id="positionTitle" class="pos-group-title">圖片預覽與位置設定</div>
+                    <div id="positionList"></div>
+                </div>
+
+                <button type="submit" id="submitBtn" class="btn-submit">立即上架</button>
+                <button type="button" id="cancelBtn" class="btn-cancel" onclick="resetForm()">取消編輯</button>
+            </form>
+
+            <hr style="margin: 3rem 0;">
+
+            <h2>已上架商品列表</h2>
+            <div id="productList" class="product-list"></div>
+        </div>
+
+        <!-- ✨ 2. 訂單管理分頁 ✨ -->
+        <div id="tab-orders" class="tab-content">
+            <h2>📦 訂單列表</h2>
+            <div id="orderList" class="product-list">載入中...</div>
+        </div>
+
+        <!-- ✨ 3. 圖片庫管理分頁 ✨ -->
+        <div id="tab-gallery" class="tab-content">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h2>🖼️ 圖片庫管理</h2>
+                <button onclick="loadGalleryManager()" class="btn-gallery">重新整理</button>
             </div>
-
-            <div id="imagePositionEditor">
-                <div id="positionTitle" class="pos-group-title">圖片預覽與位置設定</div>
-                <div id="positionList"></div>
-            </div>
-
-            <button type="submit" id="submitBtn" class="btn-submit">立即上架</button>
-            <button type="button" id="cancelBtn" class="btn-cancel" onclick="resetForm()">取消編輯</button>
-        </form>
-
-        <hr style="margin: 3rem 0;">
-
-        <h2>已上架商品列表</h2>
-        <div id="productList" class="product-list"></div>
-
-        <hr style="margin: 3rem 0;">
-
-        <h2>📦 訂單列表</h2>
-        <div id="orderList" class="product-list">載入中...</div>
+            <p style="color:#666; margin-bottom:1rem;">這裡顯示伺服器上的所有圖片。您可以刪除不再使用的舊圖。</p>
+            <div id="galleryManagerGrid" class="gallery-grid">載入中...</div>
+        </div>
     </div>
 
     <div id="galleryModal" class="modal">
@@ -926,7 +1015,7 @@
         const rotationSlider = document.getElementById('rotationSlider');
 
         // Note: inputEl now refers to the CONTAINER (.pos-control-row)
-        let currentEditingRow = null; 
+        let currentEditingRow = null;
 
         function openPosEditor(imgSrc, controlRow) {
             currentEditingRow = controlRow;
@@ -983,7 +1072,7 @@
             // Update CSS
             posPreviewImg.style.objectPosition = `${currentXPct}% ${currentYPct}%`;
             posPreviewImg.style.transform = `rotate(${currentRotation}deg)`; // ✨ Apply Rotation
-            
+
             // Update Text
             posValueDisplay.innerText = `${currentXPct.toFixed(0)}% ${currentYPct.toFixed(0)}%`;
             rotValueDisplay.innerText = `${currentRotation}°`;
@@ -991,54 +1080,39 @@
 
         // --- Drag Event Listeners ---
         // Mouse Events
-        posDragArea.addEventListener('mousedown', (e) => {
-            isDragging = true;
-            startX = e.clientX;
-            startY = e.clientY;
-        });
+        if (posDragArea) {
+            posDragArea.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                startX = e.clientX;
+                startY = e.clientY;
+            });
 
-        window.addEventListener('mouseup', () => { isDragging = false; });
+            window.addEventListener('mouseup', () => { isDragging = false; });
 
-        window.addEventListener('mousemove', (e) => {
-            if (!isDragging) return;
-            handleDrag(e.clientX, e.clientY);
-        });
+            window.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                handleDrag(e.clientX, e.clientY);
+            });
 
-        // Touch Events
-        posDragArea.addEventListener('touchstart', (e) => {
-            isDragging = true;
-            startX = e.touches[0].clientX;
-            startY = e.touches[0].clientY;
-            e.preventDefault(); // Stop scroll
-        });
+            // Touch Events
+            posDragArea.addEventListener('touchstart', (e) => {
+                isDragging = true;
+                startX = e.touches[0].clientX;
+                startY = e.touches[0].clientY;
+                e.preventDefault(); // Stop scroll
+            });
 
-        window.addEventListener('touchend', () => { isDragging = false; });
+            window.addEventListener('touchend', () => { isDragging = false; });
 
-        window.addEventListener('touchmove', (e) => {
-            if (!isDragging) return;
-            handleDrag(e.touches[0].clientX, e.touches[0].clientY);
-        });
+            window.addEventListener('touchmove', (e) => {
+                if (!isDragging) return;
+                handleDrag(e.touches[0].clientX, e.touches[0].clientY);
+            });
+        }
 
         function handleDrag(clientX, clientY) {
-            // Sensibility factor: how fast percentage changes relative to pixels moved
-            // Since we want "dragging the image CONTENT", moving mouse RIGHT means 
-            // we want to see more of the LEFT side, so object-position x% should DECREASE?
-            // Wait, object-position: 0% = Left edge of image aligns with left edge of box.
-            // object-position: 100% = Right edge of image aligns with right edge of box.
-            // If I want to "Pan Right" (move content right), I am effectively shifting the window Left.
-            // Let's implement direct mapping: 
-            // Drag Right -> Increase % (Show right side? No)
-
-            // Standard UX: Dragging the image content usually means:
-            // If I pull the image to the Right, I want to see the Left part.
-            // This is "inverse" control (like Google Maps).
-            // But object-position is static.
-
-            // Let's try simple "Slider" logic mapped to 2D first.
-            // Drag Right -> Increase X %
-            // Drag Down -> Increase Y %
-
-            const sensitivity = 0.5; // Adjust this
+            // Sensibility factor
+            const sensitivity = 0.5;
             const deltaX = clientX - startX;
             const deltaY = clientY - startY;
 
@@ -1058,6 +1132,84 @@
 
             updatePreview();
         }
+
+        // ==========================================
+        // ✨ 分頁籤切換與圖片庫管理 JS ✨
+        // ==========================================
+        function switchTab(tabId) {
+            // 1. 切換按鈕狀態
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // 2. 切換內容顯示
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(tabId).classList.add('active');
+
+            // 3. 特殊處理：如果是圖片庫 Tab，自動載入
+            if (tabId === 'tab-gallery') {
+                loadGalleryManager();
+            }
+        }
+
+        async function loadGalleryManager() {
+            const grid = document.getElementById('galleryManagerGrid');
+            grid.innerHTML = '載入中...';
+            try {
+                const res = await fetch(GALLERY_API);
+                const images = await res.json();
+                grid.innerHTML = '';
+
+                if (images.length === 0) {
+                    grid.innerHTML = '<p>目前沒有任何圖片</p>';
+                    return;
+                }
+
+                images.forEach(imgUrl => {
+                    // Extract filename for display/delete
+                    const filename = imgUrl.split('/').pop();
+
+                    const div = document.createElement('div');
+                    div.className = 'gallery-item';
+                    div.style.cursor = "default"; // Manager mode doesn't select
+
+                    div.innerHTML = `
+                        <img src="${imgUrl}" onclick="window.open('${imgUrl}', '_blank')">
+                        <button class="gallery-delete-btn" onclick="deleteImage('${filename}')" title="刪除圖片">×</button>
+                    `;
+                    grid.appendChild(div);
+                });
+            } catch (e) {
+                console.error(e);
+                grid.innerHTML = '<p style="color:red">無法載入圖片</p>';
+            }
+        }
+
+        async function deleteImage(filename) {
+            if (!confirm(`確定要永久刪除圖片 "${filename}" 嗎？\n(注意：如果有商品正在使用此圖，圖片將會失效)`)) return;
+
+            try {
+                // DELETE /api/images?filename=xxx
+                const res = await fetch(`${GALLERY_API}?filename=${encodeURIComponent(filename)}`, {
+                    method: 'DELETE'
+                });
+                const result = await res.json();
+
+                if (res.ok) {
+                    // Refresh gallery
+                    loadGalleryManager();
+                } else {
+                    alert('刪除失敗：' + (result.error || '未知錯誤'));
+                }
+            } catch (e) {
+                console.error(e);
+                alert('無法連線伺服器');
+            }
+        }
+
     </script>
 </body>
 
