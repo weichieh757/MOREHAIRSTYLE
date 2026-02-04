@@ -210,6 +210,40 @@ nav a:hover {
     .hamburger.active span:nth-child(3) {
         transform: rotate(-45deg) translate(5px, -6px);
     }
+
+    /* 手機版 dropdown 修正 */
+    nav ul.mobile-menu .dropdown {
+        flex-direction: column;
+        height: auto;
+    }
+
+    nav ul.mobile-menu .dropdown-content {
+        position: static;
+        transform: none;
+        display: none;
+        background: rgba(255, 255, 255, 0.1);
+        box-shadow: none;
+        border-radius: 8px;
+        margin-top: 10px;
+        width: 100%;
+        max-height: 300px;
+        overflow-y: auto;
+    }
+
+    nav ul.mobile-menu .dropdown.active .dropdown-content {
+        display: block;
+    }
+
+    nav ul.mobile-menu .dropdown-content a {
+        color: white;
+        padding: 10px 16px;
+        font-size: 0.95rem;
+    }
+
+    nav ul.mobile-menu .dropdown-content a:hover {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+    }
 }
 
 /* Dropdown */

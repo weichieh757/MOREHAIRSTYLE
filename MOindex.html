@@ -82,7 +82,7 @@
             </div>
         </div>
 
-        
+
         <div class="story-section">
             <picture class="bg-media">
                 <source media="(max-width: 768px)" srcset="/uploads/2026_m.jpg">
@@ -95,7 +95,7 @@
             </div>
         </div>
 
-        
+
 
         <div class="story-section">
             <picture class="bg-media">
@@ -360,9 +360,17 @@
                 navUl.classList.toggle('active');
             });
 
-            // 點擊連結後自動收起選單
+            // 點擊連結後自動收起選單 (排除 dropdown 按鈕)
             document.querySelectorAll('nav a').forEach(link => {
-                link.addEventListener('click', () => {
+                link.addEventListener('click', (e) => {
+                    // 如果是 dropdown 的觸發按鈕，只展開/收合，不關閉側邊選單
+                    const parentDropdown = link.closest('.dropdown');
+                    if (parentDropdown && link === parentDropdown.querySelector(':scope > a')) {
+                        e.preventDefault();
+                        parentDropdown.classList.toggle('active');
+                        return;
+                    }
+                    // 其他連結：關閉側邊選單
                     hamburger.classList.remove('active');
                     navUl.classList.remove('active');
                 });
