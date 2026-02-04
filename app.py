@@ -31,6 +31,26 @@ def init_db():
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     ''')
+    
+    # 確保 products 表有 variants 和 image_positions 欄位
+    # 先檢查欄位是否存在，如果不存在就新增
+    cursor = conn.execute("PRAGMA table_info(products)")
+    columns = [row[1] for row in cursor.fetchall()]
+    
+    if 'variants' not in columns:
+        try:
+            conn.execute("ALTER TABLE products ADD COLUMN variants TEXT DEFAULT '[]'")
+            print("✅ 已新增 variants 欄位到 products 表")
+        except:
+            pass
+    
+    if 'image_positions' not in columns:
+        try:
+            conn.execute("ALTER TABLE products ADD COLUMN image_positions TEXT DEFAULT '[]'")
+            print("✅ 已新增 image_positions 欄位到 products 表")
+        except:
+            pass
+    
     conn.commit()
     conn.close()
 
