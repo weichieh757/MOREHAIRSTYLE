@@ -3,10 +3,10 @@
 /* ========================================== */
 :root {
     --primary: #000;
-    --accent: rgb(34,57,90);
+    --accent: rgb(34, 57, 90);
     --accent-dark: #0000a9;
     --bg: #f4f4f4;
-    --header-bg: rgb(34,57,90);
+    --header-bg: rgb(34, 57, 90);
     --text-color: #333;
     --card-bg: #fff;
 }
@@ -159,11 +159,19 @@ nav a:hover {
     }
 
     /* Fix: Remove nav from flex flow so H1 and Hamburger align to edges */
-    nav {
+    /* Only apply absolute positioning if nav contains a menu list */
+    nav:has(ul.mobile-menu) {
         position: absolute;
         width: 0;
         height: 0;
         overflow: visible;
+    }
+
+    /* For simple nav links (like Back button), keep them in normal flow */
+    nav:not(:has(ul.mobile-menu)) {
+        position: static;
+        width: auto;
+        height: auto;
     }
 
     /* Only apply side menu style if it is a list (index page) */
@@ -764,10 +772,17 @@ td {
 /* ========================================== */
 .about-img {
     width: 100%;
-    height: 300px;
-    object-fit: cover;
+    height: auto;
+    object-fit: contain;
     border-radius: 8px;
     margin-bottom: 2rem;
+}
+
+@media (min-width: 769px) {
+    .about-img {
+        max-height: 500px;
+        object-fit: cover;
+    }
 }
 
 input[type="text"],
