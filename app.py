@@ -93,6 +93,12 @@ def get_products():
         try:
             p_dict['images'] = json.loads(p['images']) if p['images'] else []
             p_dict['variants'] = json.loads(p['variants']) if 'variants' in p_dict and p_dict['variants'] else []
+            # 嘗試解析 category，如果是 JSON 陣列字串就轉成 list
+            if p['category'] and isinstance(p['category'], str) and (p['category'].startswith('[') or '"' in p['category']):
+                 try:
+                     p_dict['category'] = json.loads(p['category'])
+                 except:
+                     pass
         except:
             pass # 如果解析失敗就維持原狀
         products_list.append(p_dict)
@@ -112,6 +118,12 @@ def get_product(id):
     try:
         p_dict['images'] = json.loads(p_dict['images']) if p_dict['images'] else []
         p_dict['variants'] = json.loads(p_dict['variants']) if 'variants' in p_dict and p_dict['variants'] else []
+        # 嘗試解析 category
+        if p_dict['category'] and isinstance(p_dict['category'], str) and (p_dict['category'].startswith('[') or '"' in p_dict['category']):
+             try:
+                 p_dict['category'] = json.loads(p_dict['category'])
+             except:
+                 pass
     except:
         pass
     return jsonify(p_dict)
