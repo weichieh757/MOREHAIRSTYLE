@@ -12,6 +12,8 @@
         /* Admin specific overrides */
         body {
             padding: 2rem;
+            /* Prevent pull-to-refresh on mobile while dragging */
+            overscroll-behavior: none;
         }
 
         .container {
@@ -236,10 +238,106 @@
             border: 2px solid #ddd;
         }
 
-        .pos-select {
+        .pos-select-display {
             flex-grow: 1;
             padding: 8px;
+            background: #f0f0f0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            color: #555;
+            cursor: pointer;
         }
+
+        .btn-pos-edit {
+            background: #8e44ad;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .pos-control-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        /* ✨ 圖片位置編輯器 Modal 樣式 ✨ */
+        .pos-modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+            text-align: center;
+        }
+
+        .pos-preview-container {
+            width: 100%;
+            height: 300px;
+            background: #eee;
+            border: 2px dashed #ccc;
+            margin: 20px 0;
+            position: relative;
+            overflow: hidden;
+            border-radius: 8px;
+            cursor: grab;
+            touch-action: none;
+            /* Prevent scroll while dragging */
+        }
+
+        .pos-preview-container:active {
+            cursor: grabbing;
+        }
+
+        .pos-preview-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: 50% 50%;
+            /* Initial Default */
+            pointer-events: none;
+            /* Let container handle events */
+        }
+
+        /* Crosshair overlay */
+        .pos-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0.5;
+        }
+
+        .pos-overlay::before,
+        .pos-overlay::after {
+            content: "";
+            position: absolute;
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .pos-overlay::before {
+            width: 100%;
+            height: 1px;
+        }
+
+        /* Horizontal line */
+        .pos-overlay::after {
+            width: 1px;
+            height: 100%;
+        }
+
+        /* Vertical line */
 
         /* ✨ 圖片庫 Modal 樣式 ✨ */
         .modal {
@@ -431,6 +529,30 @@
         </div>
     </div>
 
+    <!-- ✨ 視覺化位置編輯器 Model ✨ -->
+    <div id="posEditorModal" class="modal">
+        <div class="pos-modal-content">
+            <h2>調整圖片顯示位置</h2>
+            <p style="font-size:0.9rem; color:#666;">請在下方圖片上按住滑鼠拖曳，調整顯示重點</p>
+
+            <div class="pos-preview-container" id="posDragArea">
+                <img src="" id="posPreviewImg" class="pos-preview-img">
+                <div class="pos-overlay"></div>
+            </div>
+
+            <div style="margin-bottom: 20px; font-family: monospace;">
+                目前設定：<span id="posValueDisplay">50% 50%</span>
+            </div>
+
+            <div style="display:flex; gap:10px; justify-content:center;">
+                <button class="btn-submit" onclick="savePosition()"
+                    style="width:auto; padding: 10px 30px;">確認儲存</button>
+                <button class="btn-cancel" onclick="closePosEditor()"
+                    style="display:inline-block; width:auto;">取消</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         const API_URL = '/api/products';
         const GALLERY_API = '/api/images';
@@ -439,15 +561,8 @@
         // ✨ 暫存使用者選擇的舊圖片網址 ✨
         let selectedGalleryImages = [];
 
-        const positionOptions = [
-            { value: 'center center', text: '置中 (預設)' },
-            { value: 'top center', text: '靠上' },
-            { value: 'bottom center', text: '靠下' },
-            { value: 'center left', text: '靠左' },
-            { value: 'center right', text: '靠右' },
-            { value: 'top left', text: '左上' },
-            { value: 'top right', text: '右上' },
-        ];
+        // 全域變數：追蹤目前正在編輯的 input 欄位
+        let currentEditingInput = null;
 
         function addVariantRow(s1 = "", s2 = "", price = "") {
             const div = document.createElement('div');
@@ -509,18 +624,8 @@
 
                 // 1. 先顯示剛剛在圖庫選的舊圖
                 selectedGalleryImages.forEach(imgUrl => {
-                    let optionsHtml = '';
-                    positionOptions.forEach(opt => optionsHtml += `<option value="${opt.value}">${opt.text}</option>`);
-
-                    posList.innerHTML += `
-                    <div class="pos-edit-item" style="border-left: 5px solid #3498db;">
-                        <img src="${imgUrl}" class="pos-edit-img">
-                        <div style="flex-grow:1">
-                            <label style="font-size:0.9rem; color:#3498db;">[已選舊圖] 圖片 ${totalIndex + 1}：</label>
-                            <select name="positions" class="pos-select">${optionsHtml}</select>
-                        </div>
-                    </div>
-                `;
+                    const defaultPos = "50% 50%";
+                    posList.innerHTML += createPosEditRow(imgUrl, totalIndex + 1, defaultPos, '3498db', '[已選舊圖]');
                     totalIndex++;
                 });
 
@@ -529,17 +634,9 @@
                     Array.from(fileInput.files).forEach((file) => {
                         const reader = new FileReader();
                         reader.onload = function (e) {
-                            let optionsHtml = '';
-                            positionOptions.forEach(opt => optionsHtml += `<option value="${opt.value}">${opt.text}</option>`);
-                            posList.innerHTML += `
-                            <div class="pos-edit-item" style="border-left: 5px solid #27ae60;">
-                                <img src="${e.target.result}" class="pos-edit-img">
-                                <div style="flex-grow:1">
-                                    <label style="font-size:0.9rem; color:#27ae60;">[新上傳] 圖片 (${file.name})：</label>
-                                    <select name="positions" class="pos-select">${optionsHtml}</select>
-                                </div>
-                            </div>
-                        `;
+                            const defaultPos = "50% 50%";
+                            // 注意：新檔案的 name 屬性是 filename，這裡我們只用於顯示
+                            posList.innerHTML += createPosEditRow(e.target.result, file.name, defaultPos, '27ae60', '[新上傳]');
                         }
                         reader.readAsDataURL(file);
                     });
@@ -655,21 +752,17 @@
 
             if (selectedGalleryImages.length > 0) {
                 selectedGalleryImages.forEach((imgUrl, index) => {
-                    const currentPos = (product.image_positions && product.image_positions[index]) || 'center center';
-                    let optionsHtml = '';
-                    positionOptions.forEach(opt => {
-                        const selected = (opt.value === currentPos) ? 'selected' : '';
-                        optionsHtml += `<option value="${opt.value}" ${selected}>${opt.text}</option>`;
-                    });
-                    posList.innerHTML += `
-                    <div class="pos-edit-item" style="border-left: 5px solid #f39c12;">
-                        <img src="${imgUrl}" class="pos-edit-img">
-                        <div style="flex-grow:1">
-                            <label style="font-size:0.9rem">[原圖片] 圖片 ${index + 1}：</label>
-                            <select name="positions" class="pos-select">${optionsHtml}</select>
-                        </div>
-                    </div>
-                `;
+                    // 如果後端傳來的不是 % 格式，需要轉一下嗎？目前假設後端存的已經是字串
+                    let currentPos = (product.image_positions && product.image_positions[index]) || '50% 50%';
+
+                    // 舊資料相容：如果有 "center center" 這種格式，轉成 %
+                    const mapping = {
+                        'center center': '50% 50%', 'top center': '50% 0%', 'bottom center': '50% 100%',
+                        'center left': '0% 50%', 'center right': '100% 50%', 'top left': '0% 0%', 'top right': '100% 0%'
+                    };
+                    if (mapping[currentPos]) currentPos = mapping[currentPos];
+
+                    posList.innerHTML += createPosEditRow(imgUrl, index + 1, currentPos, 'f39c12', '[原圖片]');
                 });
             } else { posList.innerHTML = '<p style="padding:10px">無圖片</p>'; }
 
@@ -773,6 +866,147 @@
 
         loadProducts();
         loadOrders();
+
+        // ==========================================
+        // ✨ 新增函數：產生位置編輯列 HTML ✨
+        // ==========================================
+        function createPosEditRow(imgUrl, labelInfo, currentPos, color, typeLabel) {
+            // Encode imgUrl to avoid breaking HTML if it contains special chars
+            // But for blob URLs or local paths it's usually safe. 
+            // We use a unique ID for the input to reference it later if needed, but simple passing logic is fine.
+            return `
+            <div class="pos-edit-item" style="border-left: 5px solid #${color};">
+                <img src="${imgUrl}" class="pos-edit-img">
+                <div style="flex-grow:1">
+                    <label style="font-size:0.9rem; color:#${color};">${typeLabel} 圖片 ${labelInfo}：</label>
+                    <div class="pos-control-row">
+                        <input type="text" name="positions" class="pos-select-display" value="${currentPos}" readonly 
+                               onclick="openPosEditor('${imgUrl}', this)">
+                        <button type="button" class="btn-pos-edit" onclick="openPosEditor('${imgUrl}', this.previousElementSibling)">調整位置</button>
+                    </div>
+                </div>
+            </div>
+            `;
+        }
+
+        // ==========================================
+        // ✨ 視覺化拖曳編輯邏輯 (Visual Drag Editor) ✨
+        // ==========================================
+        let isDragging = false;
+        let startX, startY;
+        let currentXPct = 50;
+        let currentYPct = 50;
+
+        const posDragArea = document.getElementById('posDragArea');
+        const posPreviewImg = document.getElementById('posPreviewImg');
+        const posValueDisplay = document.getElementById('posValueDisplay');
+
+        function openPosEditor(imgSrc, inputEl) {
+            currentEditingInput = inputEl;
+            posPreviewImg.src = imgSrc;
+            document.getElementById('posEditorModal').style.display = 'block';
+
+            // Parse initial value (e.g., "30% 60%")
+            const val = inputEl.value || "50% 50%";
+            const parts = val.split(' ');
+            if (parts.length === 2) {
+                currentXPct = parseFloat(parts[0]);
+                currentYPct = parseFloat(parts[1]);
+            } else {
+                currentXPct = 50;
+                currentYPct = 50;
+            }
+
+            updatePreview();
+        }
+
+        function closePosEditor() {
+            document.getElementById('posEditorModal').style.display = 'none';
+        }
+
+        function savePosition() {
+            if (currentEditingInput) {
+                currentEditingInput.value = `${currentXPct.toFixed(1)}% ${currentYPct.toFixed(1)}%`;
+            }
+            closePosEditor();
+        }
+
+        function updatePreview() {
+            // Update CSS
+            posPreviewImg.style.objectPosition = `${currentXPct}% ${currentYPct}%`;
+            // Update Text
+            posValueDisplay.innerText = `${currentXPct.toFixed(0)}% ${currentYPct.toFixed(0)}%`;
+        }
+
+        // --- Drag Event Listeners ---
+        // Mouse Events
+        posDragArea.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            startX = e.clientX;
+            startY = e.clientY;
+        });
+
+        window.addEventListener('mouseup', () => { isDragging = false; });
+
+        window.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            handleDrag(e.clientX, e.clientY);
+        });
+
+        // Touch Events
+        posDragArea.addEventListener('touchstart', (e) => {
+            isDragging = true;
+            startX = e.touches[0].clientX;
+            startY = e.touches[0].clientY;
+            e.preventDefault(); // Stop scroll
+        });
+
+        window.addEventListener('touchend', () => { isDragging = false; });
+
+        window.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            handleDrag(e.touches[0].clientX, e.touches[0].clientY);
+        });
+
+        function handleDrag(clientX, clientY) {
+            // Sensibility factor: how fast percentage changes relative to pixels moved
+            // Since we want "dragging the image CONTENT", moving mouse RIGHT means 
+            // we want to see more of the LEFT side, so object-position x% should DECREASE?
+            // Wait, object-position: 0% = Left edge of image aligns with left edge of box.
+            // object-position: 100% = Right edge of image aligns with right edge of box.
+            // If I want to "Pan Right" (move content right), I am effectively shifting the window Left.
+            // Let's implement direct mapping: 
+            // Drag Right -> Increase % (Show right side? No)
+
+            // Standard UX: Dragging the image content usually means:
+            // If I pull the image to the Right, I want to see the Left part.
+            // This is "inverse" control (like Google Maps).
+            // But object-position is static.
+
+            // Let's try simple "Slider" logic mapped to 2D first.
+            // Drag Right -> Increase X %
+            // Drag Down -> Increase Y %
+
+            const sensitivity = 0.5; // Adjust this
+            const deltaX = clientX - startX;
+            const deltaY = clientY - startY;
+
+            // Update start pos for next frame
+            startX = clientX;
+            startY = clientY;
+
+            // Update Percentages
+            currentXPct += deltaX * sensitivity;
+            currentYPct += deltaY * sensitivity;
+
+            // Clamp 0-100
+            if (currentXPct < 0) currentXPct = 0;
+            if (currentXPct > 100) currentXPct = 100;
+            if (currentYPct < 0) currentYPct = 0;
+            if (currentYPct > 100) currentYPct = 100;
+
+            updatePreview();
+        }
     </script>
 </body>
 

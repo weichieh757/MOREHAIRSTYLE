@@ -99,6 +99,8 @@ def get_products():
                      p_dict['category'] = json.loads(p['category'])
                  except:
                      pass
+            
+            p_dict['image_positions'] = json.loads(p['image_positions']) if 'image_positions' in p_dict and p_dict['image_positions'] else []
         except:
             pass # 如果解析失敗就維持原狀
         products_list.append(p_dict)
@@ -124,6 +126,8 @@ def get_product(id):
                  p_dict['category'] = json.loads(p_dict['category'])
              except:
                  pass
+        
+        p_dict['image_positions'] = json.loads(p_dict['image_positions']) if 'image_positions' in p_dict and p_dict['image_positions'] else []
     except:
         pass
     return jsonify(p_dict)
@@ -144,6 +148,10 @@ def save_product(id=None):
     category_str = json.dumps(categories, ensure_ascii=False)
 
     variants = data.get('variants', '[]')
+    
+    # 處理圖片位置
+    positions = request.form.getlist('positions') # 這裡收到的是 list of strings, e.g. ["50% 50%", "20% 30%"]
+    image_positions_json = json.dumps(positions)
     
     # --- 圖片處理 ---
     # 1. 處理新上傳的檔案
@@ -172,14 +180,14 @@ def save_product(id=None):
     if id:
         conn.execute('''
             UPDATE products 
-            SET name=?, price=?, category=?, description=?, image=?, images=?, variants=?
+            SET name=?, price=?, category=?, description=?, image=?, images=?, variants=?, image_positions=?
             WHERE id=?
-        ''', (name, price, category_str, description, main_image, images_json, variants, id))
+        ''', (name, price, category_str, description, main_image, images_json, variants, image_positions_json, id))
     else:
         conn.execute('''
-            INSERT INTO products (name, price, category, description, image, images, variants)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-        ''', (name, price, category_str, description, main_image, images_json, variants))
+            INSERT INTO products (name, price, category, description, image, images, variants, image_positions)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (name, price, category_str, description, main_image, images_json, variants, image_positions_json))
         
     conn.commit()
     conn.close()
