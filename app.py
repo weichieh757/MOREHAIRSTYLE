@@ -50,6 +50,13 @@ def init_db():
             print("✅ 已新增 image_positions 欄位到 products 表")
         except:
             pass
+
+    if 'image_rotations' not in columns:
+        try:
+            conn.execute("ALTER TABLE products ADD COLUMN image_rotations TEXT DEFAULT '[]'")
+            print("✅ 已新增 image_rotations 欄位到 products 表")
+        except:
+            pass
     
     conn.commit()
     conn.close()
@@ -101,6 +108,7 @@ def get_products():
                      pass
             
             p_dict['image_positions'] = json.loads(p['image_positions']) if 'image_positions' in p_dict and p_dict['image_positions'] else []
+            p_dict['image_rotations'] = json.loads(p['image_rotations']) if 'image_rotations' in p_dict and p_dict['image_rotations'] else []
         except:
             pass # 如果解析失敗就維持原狀
         products_list.append(p_dict)
@@ -128,6 +136,7 @@ def get_product(id):
                  pass
         
         p_dict['image_positions'] = json.loads(p_dict['image_positions']) if 'image_positions' in p_dict and p_dict['image_positions'] else []
+        p_dict['image_rotations'] = json.loads(p_dict['image_rotations']) if 'image_rotations' in p_dict and p_dict['image_rotations'] else []
     except:
         pass
     return jsonify(p_dict)
@@ -152,6 +161,10 @@ def save_product(id=None):
     # 處理圖片位置
     positions = request.form.getlist('positions') # 這裡收到的是 list of strings, e.g. ["50% 50%", "20% 30%"]
     image_positions_json = json.dumps(positions)
+    
+    # 處理圖片旋轉
+    rotations = request.form.getlist('rotations')
+    image_rotations_json = json.dumps(rotations)
     
     # --- 圖片處理 ---
     # 1. 處理新上傳的檔案
@@ -180,14 +193,14 @@ def save_product(id=None):
     if id:
         conn.execute('''
             UPDATE products 
-            SET name=?, price=?, category=?, description=?, image=?, images=?, variants=?, image_positions=?
+            SET name=?, price=?, category=?, description=?, image=?, images=?, variants=?, image_positions=?, image_rotations=?
             WHERE id=?
-        ''', (name, price, category_str, description, main_image, images_json, variants, image_positions_json, id))
+        ''', (name, price, category_str, description, main_image, images_json, variants, image_positions_json, image_rotations_json, id))
     else:
         conn.execute('''
-            INSERT INTO products (name, price, category, description, image, images, variants, image_positions)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-        ''', (name, price, category_str, description, main_image, images_json, variants, image_positions_json))
+            INSERT INTO products (name, price, category, description, image, images, variants, image_positions, image_rotations)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (name, price, category_str, description, main_image, images_json, variants, image_positions_json, image_rotations_json))
         
     conn.commit()
     conn.close()

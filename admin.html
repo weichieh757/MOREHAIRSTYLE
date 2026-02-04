@@ -541,7 +541,17 @@
             </div>
 
             <div style="margin-bottom: 20px; font-family: monospace;">
-                目前設定：<span id="posValueDisplay">50% 50%</span>
+                位置：<span id="posValueDisplay">50% 50%</span>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <label for="rotationSlider" style="margin-bottom:10px;">旋轉角度：<span
+                        id="rotValueDisplay">0°</span></label>
+                <input type="range" id="rotationSlider" min="0" max="360" value="0" style="width: 80%;"
+                    oninput="updateRotationPreview(this.value)">
+                <button type="button" class="btn-pos-edit"
+                    onclick="document.getElementById('rotationSlider').value=0; updateRotationPreview(0);"
+                    style="margin-left: 10px; padding: 5px 10px;">重置</button>
             </div>
 
             <div style="display:flex; gap:10px; justify-content:center;">
@@ -625,7 +635,8 @@
                 // 1. 先顯示剛剛在圖庫選的舊圖
                 selectedGalleryImages.forEach(imgUrl => {
                     const defaultPos = "50% 50%";
-                    posList.innerHTML += createPosEditRow(imgUrl, totalIndex + 1, defaultPos, '3498db', '[已選舊圖]');
+                    const defaultRot = 0;
+                    posList.innerHTML += createPosEditRow(imgUrl, totalIndex + 1, defaultPos, defaultRot, '3498db', '[已選舊圖]');
                     totalIndex++;
                 });
 
@@ -635,8 +646,9 @@
                         const reader = new FileReader();
                         reader.onload = function (e) {
                             const defaultPos = "50% 50%";
+                            const defaultRot = 0;
                             // 注意：新檔案的 name 屬性是 filename，這裡我們只用於顯示
-                            posList.innerHTML += createPosEditRow(e.target.result, file.name, defaultPos, '27ae60', '[新上傳]');
+                            posList.innerHTML += createPosEditRow(e.target.result, file.name, defaultPos, defaultRot, '27ae60', '[新上傳]');
                         }
                         reader.readAsDataURL(file);
                     });
@@ -754,6 +766,7 @@
                 selectedGalleryImages.forEach((imgUrl, index) => {
                     // 如果後端傳來的不是 % 格式，需要轉一下嗎？目前假設後端存的已經是字串
                     let currentPos = (product.image_positions && product.image_positions[index]) || '50% 50%';
+                    let currentRot = (product.image_rotations && product.image_rotations[index]) || 0;
 
                     // 舊資料相容：如果有 "center center" 這種格式，轉成 %
                     const mapping = {
@@ -762,7 +775,7 @@
                     };
                     if (mapping[currentPos]) currentPos = mapping[currentPos];
 
-                    posList.innerHTML += createPosEditRow(imgUrl, index + 1, currentPos, 'f39c12', '[原圖片]');
+                    posList.innerHTML += createPosEditRow(imgUrl, index + 1, currentPos, currentRot, 'f39c12', '[原圖片]');
                 });
             } else { posList.innerHTML = '<p style="padding:10px">無圖片</p>'; }
 
@@ -870,7 +883,7 @@
         // ==========================================
         // ✨ 新增函數：產生位置編輯列 HTML ✨
         // ==========================================
-        function createPosEditRow(imgUrl, labelInfo, currentPos, color, typeLabel) {
+        function createPosEditRow(imgUrl, labelInfo, currentPos, currentRot, color, typeLabel) {
             // Encode imgUrl to avoid breaking HTML if it contains special chars
             // But for blob URLs or local paths it's usually safe. 
             // We use a unique ID for the input to reference it later if needed, but simple passing logic is fine.
@@ -880,9 +893,17 @@
                 <div style="flex-grow:1">
                     <label style="font-size:0.9rem; color:#${color};">${typeLabel} 圖片 ${labelInfo}：</label>
                     <div class="pos-control-row">
-                        <input type="text" name="positions" class="pos-select-display" value="${currentPos}" readonly 
-                               onclick="openPosEditor('${imgUrl}', this)">
-                        <button type="button" class="btn-pos-edit" onclick="openPosEditor('${imgUrl}', this.previousElementSibling)">調整位置</button>
+                        <!-- 位置輸入 (隱藏) -->
+                        <input type="hidden" name="positions" value="${currentPos}">
+                        <!-- 旋轉輸入 (隱藏) -->
+                        <input type="hidden" name="rotations" value="${currentRot}">
+                        
+                        <!-- 顯示狀態 -->
+                        <div class="pos-select-display" onclick="openPosEditor('${imgUrl}', this.parentElement)">
+                            位置: ${currentPos} | 旋轉: ${currentRot}°
+                        </div>
+                        
+                        <button type="button" class="btn-pos-edit" onclick="openPosEditor('${imgUrl}', this.parentElement)">調整</button>
                     </div>
                 </div>
             </div>
@@ -896,18 +917,27 @@
         let startX, startY;
         let currentXPct = 50;
         let currentYPct = 50;
+        let currentRotation = 0; // ✨ 新增旋轉變數
 
         const posDragArea = document.getElementById('posDragArea');
         const posPreviewImg = document.getElementById('posPreviewImg');
         const posValueDisplay = document.getElementById('posValueDisplay');
+        const rotValueDisplay = document.getElementById('rotValueDisplay');
+        const rotationSlider = document.getElementById('rotationSlider');
 
-        function openPosEditor(imgSrc, inputEl) {
-            currentEditingInput = inputEl;
+        // Note: inputEl now refers to the CONTAINER (.pos-control-row)
+        let currentEditingRow = null; 
+
+        function openPosEditor(imgSrc, controlRow) {
+            currentEditingRow = controlRow;
             posPreviewImg.src = imgSrc;
             document.getElementById('posEditorModal').style.display = 'block';
 
-            // Parse initial value (e.g., "30% 60%")
-            const val = inputEl.value || "50% 50%";
+            const posInput = controlRow.querySelector('input[name="positions"]');
+            const rotInput = controlRow.querySelector('input[name="rotations"]');
+
+            // Parse Pos
+            const val = posInput.value || "50% 50%";
             const parts = val.split(' ');
             if (parts.length === 2) {
                 currentXPct = parseFloat(parts[0]);
@@ -917,6 +947,10 @@
                 currentYPct = 50;
             }
 
+            // Parse Rot
+            currentRotation = parseInt(rotInput.value) || 0;
+            rotationSlider.value = currentRotation;
+
             updatePreview();
         }
 
@@ -925,17 +959,34 @@
         }
 
         function savePosition() {
-            if (currentEditingInput) {
-                currentEditingInput.value = `${currentXPct.toFixed(1)}% ${currentYPct.toFixed(1)}%`;
+            if (currentEditingRow) {
+                const posInput = currentEditingRow.querySelector('input[name="positions"]');
+                const rotInput = currentEditingRow.querySelector('input[name="rotations"]');
+                const displayDiv = currentEditingRow.querySelector('.pos-select-display');
+
+                const newPos = `${currentXPct.toFixed(1)}% ${currentYPct.toFixed(1)}%`;
+                const newRot = currentRotation;
+
+                posInput.value = newPos;
+                rotInput.value = newRot;
+                displayDiv.innerText = `位置: ${newPos} | 旋轉: ${newRot}°`;
             }
             closePosEditor();
+        }
+
+        function updateRotationPreview(val) {
+            currentRotation = parseInt(val);
+            updatePreview();
         }
 
         function updatePreview() {
             // Update CSS
             posPreviewImg.style.objectPosition = `${currentXPct}% ${currentYPct}%`;
+            posPreviewImg.style.transform = `rotate(${currentRotation}deg)`; // ✨ Apply Rotation
+            
             // Update Text
             posValueDisplay.innerText = `${currentXPct.toFixed(0)}% ${currentYPct.toFixed(0)}%`;
+            rotValueDisplay.innerText = `${currentRotation}°`;
         }
 
         // --- Drag Event Listeners ---

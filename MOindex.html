@@ -265,17 +265,19 @@
                 displayList.forEach(p => {
                     let imageList = (p.images && p.images.length > 0) ? p.images : [p.image];
                     let posList = (p.image_positions && p.image_positions.length > 0) ? p.image_positions : Array(imageList.length).fill('center center');
+                    let rotList = (p.image_rotations && p.image_rotations.length > 0) ? p.image_rotations : Array(imageList.length).fill(0);
 
                     let imgHtml = '';
                     imageList.forEach((src, index) => {
                         const activeClass = (index === 0) ? 'active' : '';
                         const positionStyle = `object-position: ${posList[index] || 'center center'};`;
+                        const rotationStyle = `transform: rotate(${rotList[index] || 0}deg);`;
 
                         // ✨ 新增：第一張圖立即載入，其他圖設定為 lazy (延遲載入) ✨
                         // 這樣可以大幅減少一開始的網路塞車
                         const loadingAttr = (index === 0) ? '' : 'loading="lazy"';
 
-                        imgHtml += `<img src="${src}" alt="${p.name}" ${loadingAttr} class="card-img ${activeClass}" style="${positionStyle}" onerror="this.src='https://placehold.co/400x400?text=No+Image'">`;
+                        imgHtml += `<img src="${src}" alt="${p.name}" ${loadingAttr} class="card-img ${activeClass}" style="${positionStyle} ${rotationStyle}" onerror="this.src='https://placehold.co/400x400?text=No+Image'">`;
                     });
 
                     html += `

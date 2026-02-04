@@ -138,11 +138,15 @@
         function renderProduct(product) {
             let imageList = (product.images && product.images.length > 0) ? product.images : [product.image];
             let posList = (product.image_positions && product.image_positions.length > 0) ? product.image_positions : Array(imageList.length).fill('center center');
+            let rotList = (product.image_rotations && product.image_rotations.length > 0) ? product.image_rotations : Array(imageList.length).fill(0);
 
             let imagesHtml = ''; let dotsHtml = '';
             imageList.forEach((img, index) => {
                 const positionStyle = `object-position: ${posList[index] || 'center center'};`;
-                imagesHtml += `<img src="${img}" class="slide-img ${index === 0 ? 'active-slide' : ''}" style="${positionStyle}" onerror="this.src='https://placehold.co/500x500?text=No+Image'">`;
+                const rotationStyle = `transform: rotate(${rotList[index] || 0}deg);`;
+
+                // 注意：旋轉可能會導致圖片超出邊界，父容器 slides 應該要有 overflow:hidden (CSS已在styles.css設定)
+                imagesHtml += `<img src="${img}" class="slide-img ${index === 0 ? 'active-slide' : ''}" style="${positionStyle} ${rotationStyle}" onerror="this.src='https://placehold.co/500x500?text=No+Image'">`;
                 dotsHtml += `<span class="dot ${index === 0 ? 'active-dot' : ''}" onclick="currentSlide(${index + 1})"></span>`;
             });
             let controlsHtml = imageList.length > 1 ? `<a class="prev" onclick="plusSlides(-1)">❮</a><a class="next" onclick="plusSlides(1)">❯</a><div class="dot-container">${dotsHtml}</div>` : '';
