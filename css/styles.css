@@ -390,6 +390,14 @@ nav a:hover {
     .story-title {
         font-size: 2rem;
     }
+
+    /* Fix: "Professional Care" image zooming issue */
+    /* Release height constraint to show full 1080x1350 image */
+    #section-professional {
+        height: auto;
+        min-height: auto;
+        aspect-ratio: 1080 / 1350;
+    }
 }
 
 /* ========================================== */
