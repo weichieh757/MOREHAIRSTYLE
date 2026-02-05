@@ -391,12 +391,12 @@ nav a:hover {
         font-size: 2rem;
     }
 
-    /* Fix: "Professional Care" image zooming issue */
-    /* Release height constraint to show full 1080x1350 image */
-    #section-professional {
-        height: auto;
-        min-height: auto;
-        aspect-ratio: 1080 / 1350;
+    /* Fix: Show full 1080x1350 image without zooming/cropping */
+    /* Use contain to fit image inside the viewport */
+    #section-professional .bg-media img {
+        object-fit: contain !important;
+        background-color: #f4f4f4;
+        /* Match site bg or use black/white */
     }
 }
 
