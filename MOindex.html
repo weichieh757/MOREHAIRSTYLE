@@ -265,22 +265,17 @@
                     let posList = (p.image_positions && p.image_positions.length > 0) ? p.image_positions : Array(imageList.length).fill('center center');
                     let rotList = (p.image_rotations && p.image_rotations.length > 0) ? p.image_rotations : Array(imageList.length).fill(0);
 
-                    let imgHtml = '';
-                    imageList.forEach((src, index) => {
-                        const activeClass = (index === 0) ? 'active' : '';
-                        const positionStyle = `object-position: ${posList[index] || 'center center'};`;
-                        const rotationStyle = `transform: rotate(${rotList[index] || 0}deg);`;
-
-                        // ✨ 新增：第一張圖立即載入，其他圖設定為 lazy (延遲載入) ✨
-                        // 這樣可以大幅減少一開始的網路塞車
-                        const loadingAttr = (index === 0) ? '' : 'loading="lazy"';
-
-                        imgHtml += `<img src="${src}" alt="${p.name}" ${loadingAttr} class="card-img ${activeClass}" style="${positionStyle} ${rotationStyle}" onerror="this.src='https://placehold.co/400x400?text=No+Image'">`;
-                    });
+                    // ✨ 使用 cover_index 選擇首圖，超出範圍則回退為第一張 ✨
+                    const coverIdx = (p.cover_index != null && p.cover_index < imageList.length) ? p.cover_index : 0;
+                    const coverSrc = imageList[coverIdx];
+                    const positionStyle = `object-position: ${posList[coverIdx] || 'center center'};`;
+                    const rotStyle = `--rot: ${rotList[coverIdx] || 0}deg;`;
 
                     html += `
                         <div class="product-card" onclick="window.location.href='MOproduct.html?id=${p.id}'">
-                            <div class="card-image-box">${imgHtml}</div>
+                            <div class="card-image-box">
+                                <img src="${coverSrc}" alt="${p.name}" class="card-img active" style="${positionStyle} ${rotStyle}" onerror="this.src='https://placehold.co/400x400?text=No+Image'">
+                            </div>
                             <div class="product-info">
                                 <h3>${p.name}</h3>
                                 <p style="font-size: 0.9rem;">點擊查看詳情</p>
@@ -290,7 +285,6 @@
                     `;
                 });
                 container.innerHTML = html;
-                setTimeout(setupHoverSlideshow, 100);
 
             } else {
                 // ==========================================
@@ -308,41 +302,7 @@
             updateCartCount();
         }
 
-        // 商品圖片輪播效果 (滑鼠懸停時)
-        function setupHoverSlideshow() {
-            const cards = document.querySelectorAll('.product-card');
-            cards.forEach(card => {
-                const imageBox = card.querySelector('.card-image-box');
-                if (!imageBox) return;
-                const images = imageBox.querySelectorAll('img');
-
-                images.forEach((img, idx) => {
-                    if (idx === 0) img.classList.add('active');
-                    else img.classList.remove('active');
-                });
-
-                card.hoverInterval = null;
-
-                if (images.length > 1) {
-                    card.addEventListener('mouseenter', () => {
-                        if (card.hoverInterval) return;
-                        card.hoverInterval = setInterval(() => {
-                            let activeIndex = -1;
-                            images.forEach((img, idx) => { if (img.classList.contains('active')) activeIndex = idx; });
-                            if (activeIndex === -1) activeIndex = 0;
-                            images[activeIndex].classList.remove('active');
-                            let nextIndex = (activeIndex + 1) % images.length;
-                            images[nextIndex].classList.add('active');
-                        }, 1500);
-                    });
-                    card.addEventListener('mouseleave', () => {
-                        if (card.hoverInterval) { clearInterval(card.hoverInterval); card.hoverInterval = null; }
-                        images.forEach(img => img.classList.remove('active'));
-                        if (images[0]) images[0].classList.add('active');
-                    });
-                }
-            });
-        }
+        // 商品圖片輪播已移除，改為單圖 + hover 放大效果
 
         window.onload = function () {
             setupResponsiveVideo(); // 初始化響應式影片

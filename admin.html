@@ -231,8 +231,8 @@
         }
 
         .pos-edit-img {
-            width: 80px;
-            height: 80px;
+            width: 120px;
+            height: 120px;
             object-fit: cover;
             border-radius: 5px;
             border: 2px solid #ddd;
@@ -498,6 +498,28 @@
         .gallery-delete-btn:hover {
             background: #c0392b;
         }
+
+        /* ⭐ 首圖選擇器樣式 */
+        .cover-radio-label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            color: #888;
+            margin-top: 6px;
+        }
+
+        .cover-radio-label input[type="radio"] {
+            width: 16px;
+            height: 16px;
+            accent-color: #e67e22;
+        }
+
+        .cover-radio-label.is-cover {
+            color: #e67e22;
+            font-weight: bold;
+        }
     </style>
 </head>
 
@@ -519,6 +541,7 @@
 
             <form id="uploadForm">
                 <input type="hidden" id="editId">
+                <input type="hidden" id="coverIndex" name="cover_index" value="0">
 
                 <div class="form-group">
                     <label>商品名稱</label>
@@ -725,21 +748,25 @@
                 selectedGalleryImages.forEach(imgUrl => {
                     const defaultPos = "50% 50%";
                     const defaultRot = 0;
-                    posList.innerHTML += createPosEditRow(imgUrl, totalIndex + 1, defaultPos, defaultRot, '3498db', '[已選舊圖]');
+                    const isCover = (totalIndex === 0); // 預設第一張為首圖
+                    posList.innerHTML += createPosEditRow(imgUrl, totalIndex + 1, defaultPos, defaultRot, '3498db', '[已選舊圖]', totalIndex, isCover);
                     totalIndex++;
                 });
 
                 // 2. 再顯示新上傳的檔案
                 if (hasFiles) {
                     Array.from(fileInput.files).forEach((file) => {
+                        const capturedIndex = totalIndex; // 捕獲當前索引
                         const reader = new FileReader();
                         reader.onload = function (e) {
                             const defaultPos = "50% 50%";
                             const defaultRot = 0;
+                            const isCover = (capturedIndex === 0 && selectedGalleryImages.length === 0);
                             // 注意：新檔案的 name 屬性是 filename，這裡我們只用於顯示
-                            posList.innerHTML += createPosEditRow(e.target.result, file.name, defaultPos, defaultRot, '27ae60', '[新上傳]');
+                            posList.innerHTML += createPosEditRow(e.target.result, file.name, defaultPos, defaultRot, '27ae60', '[新上傳]', capturedIndex, isCover);
                         }
                         reader.readAsDataURL(file);
+                        totalIndex++;
                     });
                 }
 
@@ -844,6 +871,7 @@
             // ... (圖片預覽邏輯保持不變) ...
             selectedGalleryImages = product.images || [];
             document.getElementById('fileInput').value = "";
+            document.getElementById('coverIndex').value = product.cover_index || 0;
 
             const posList = document.getElementById('positionList');
             const editor = document.getElementById('imagePositionEditor');
@@ -864,7 +892,8 @@
                     };
                     if (mapping[currentPos]) currentPos = mapping[currentPos];
 
-                    posList.innerHTML += createPosEditRow(imgUrl, index + 1, currentPos, currentRot, 'f39c12', '[原圖片]');
+                    const isCover = (index === (product.cover_index || 0));
+                    posList.innerHTML += createPosEditRow(imgUrl, index + 1, currentPos, currentRot, 'f39c12', '[原圖片]', index, isCover);
                 });
             } else { posList.innerHTML = '<p style="padding:10px">無圖片</p>'; }
 
@@ -881,6 +910,7 @@
             document.getElementById('cancelBtn').style.display = "none";
             document.getElementById('mainContainer').classList.remove('editing');
             selectedGalleryImages = []; // 清空已選舊圖
+            document.getElementById('coverIndex').value = '0'; // 重置首圖
         }
 
         document.getElementById('uploadForm').addEventListener('submit', async (e) => {
@@ -972,7 +1002,7 @@
         // ==========================================
         // ✨ 新增函數：產生位置編輯列 HTML ✨
         // ==========================================
-        function createPosEditRow(imgUrl, labelInfo, currentPos, currentRot, color, typeLabel) {
+        function createPosEditRow(imgUrl, labelInfo, currentPos, currentRot, color, typeLabel, imgIndex = 0, isCover = false) {
             // Encode imgUrl to avoid breaking HTML if it contains special chars
             // But for blob URLs or local paths it's usually safe. 
             // We use a unique ID for the input to reference it later if needed, but simple passing logic is fine.
@@ -981,6 +1011,10 @@
                 <img src="${imgUrl}" class="pos-edit-img">
                 <div style="flex-grow:1">
                     <label style="font-size:0.9rem; color:#${color};">${typeLabel} 圖片 ${labelInfo}：</label>
+                    <label class="cover-radio-label ${isCover ? 'is-cover' : ''}">
+                        <input type="radio" name="cover_select" value="${imgIndex}" ${isCover ? 'checked' : ''} onchange="document.getElementById('coverIndex').value=this.value; document.querySelectorAll('.cover-radio-label').forEach(l=>l.classList.remove('is-cover')); this.closest('.cover-radio-label').classList.add('is-cover');">
+                        ⭐ 設為首圖
+                    </label>
                     <div class="pos-control-row">
                         <!-- 位置輸入 (隱藏) -->
                         <input type="hidden" name="positions" value="${currentPos}">

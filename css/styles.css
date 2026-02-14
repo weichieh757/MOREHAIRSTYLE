@@ -457,6 +457,18 @@ nav a:hover {
     z-index: 2;
 }
 
+/* ✨ 滑鼠懸停放大效果 ✨ */
+.card-image-box img {
+    --rot: 0deg;
+    /* 預設無旋轉 */
+    transform: rotate(var(--rot));
+    transition: transform 0.4s ease, opacity 0.5s ease-in-out;
+}
+
+.product-card:hover .card-image-box img {
+    transform: scale(1.08) rotate(var(--rot));
+}
+
 .product-info {
     padding: 1.2rem;
     flex-grow: 1;
