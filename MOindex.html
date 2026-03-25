@@ -38,6 +38,7 @@
 
         <nav>
             <ul class="mobile-menu">
+                <span class="menu-close-btn">&times;</span>
                 <li class="dropdown">
                     <a href="MOindex.html?cat=all"
                         style="padding-bottom: 30px; margin-bottom: -30px; display: inline-block;">所有商品 ▾</a>
@@ -53,11 +54,11 @@
                         <a href="MOindex.html?cat=其他">其他</a>
                     </div>
                 </li>
-                <!-- 請在您部署新網站後，將下方的 href 改成新網站的網址 (例如 https://momo-aqua.onrender.com) -->
                 <li><a href="https://moreaquasite.onrender.com" target="_blank" class="btn-nav">日本碳酸泉</a></li>
                 <li><a href="MOabout.html">關於我們</a></li>
                 <li><a href="MOcart.html">🛒 購物車 <span id="cart-count" class="cart-count">0</span></a></li>
             </ul>
+            <div class="menu-overlay"></div>
         </nav>
     </header>
 
@@ -119,6 +120,19 @@
             </div>
         </div>
 
+    </div>
+
+    <!-- 手機版水平分類列 -->
+    <div class="category-bar" id="category-bar">
+        <a href="MOindex.html?cat=all" data-cat="all">全部</a>
+        <a href="MOindex.html?cat=洗髮" data-cat="洗髮">洗髮</a>
+        <a href="MOindex.html?cat=保養" data-cat="保養">保養</a>
+        <a href="MOindex.html?cat=煥采" data-cat="煥采">煥采</a>
+        <a href="MOindex.html?cat=活萃" data-cat="活萃">活淬</a>
+        <a href="MOindex.html?cat=R.O.8" data-cat="R.O.8">R.O.8</a>
+        <a href="MOindex.html?cat=日本" data-cat="日本">日本</a>
+        <a href="MOindex.html?cat=韓國" data-cat="韓國">韓國</a>
+        <a href="MOindex.html?cat=其他" data-cat="其他">其他</a>
     </div>
 
     <main id="product-section" class="container" style="display: none;">
@@ -313,30 +327,93 @@
         // ==========================================
         const hamburger = document.querySelector('.hamburger');
         const navUl = document.querySelector('nav ul');
+        const menuOverlay = document.querySelector('.menu-overlay');
+        const menuCloseBtn = document.querySelector('.menu-close-btn');
+
+        function openMenu() {
+            hamburger.classList.add('active');
+            navUl.classList.add('active');
+            if (menuOverlay) menuOverlay.classList.add('active');
+        }
+
+        function closeMenu() {
+            hamburger.classList.remove('active');
+            navUl.classList.remove('active');
+            if (menuOverlay) menuOverlay.classList.remove('active');
+        }
 
         if (hamburger) {
             hamburger.addEventListener('click', () => {
-                hamburger.classList.toggle('active');
-                navUl.classList.toggle('active');
+                if (navUl.classList.contains('active')) {
+                    closeMenu();
+                } else {
+                    openMenu();
+                }
             });
+
+            // 關閉按鈕
+            if (menuCloseBtn) {
+                menuCloseBtn.addEventListener('click', closeMenu);
+            }
+
+            // 點擊遮罩關閉
+            if (menuOverlay) {
+                menuOverlay.addEventListener('click', closeMenu);
+            }
 
             // 點擊連結後自動收起選單 (排除 dropdown 按鈕)
             document.querySelectorAll('nav a').forEach(link => {
                 link.addEventListener('click', (e) => {
-                    // 如果是 dropdown 的觸發按鈕，只展開/收合，不關閉側邊選單
                     const parentDropdown = link.closest('.dropdown');
                     if (parentDropdown && link === parentDropdown.querySelector(':scope > a')) {
                         e.preventDefault();
                         parentDropdown.classList.toggle('active');
                         return;
                     }
-                    // 其他連結：關閉側邊選單
-                    hamburger.classList.remove('active');
-                    navUl.classList.remove('active');
+                    closeMenu();
                 });
             });
         }
+
+        // ==========================================
+        // ✨ [分類列] 手機版高亮當前分類 ✨
+        // ==========================================
+        function highlightCategoryBar() {
+            const params = new URLSearchParams(window.location.search);
+            const cat = params.get('cat');
+            const bar = document.getElementById('category-bar');
+            if (!bar) return;
+
+            if (cat) {
+                bar.style.display = 'flex';
+                bar.querySelectorAll('a').forEach(a => {
+                    a.classList.toggle('active', a.dataset.cat === cat);
+                });
+            } else {
+                bar.style.display = 'none';
+            }
+        }
+        highlightCategoryBar();
+
+        // ==========================================
+        // ✨ [回到頂端] 按鈕 ✨
+        // ==========================================
+        const backToTopBtn = document.getElementById('back-to-top');
+        if (backToTopBtn) {
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 300) {
+                    backToTopBtn.classList.add('visible');
+                } else {
+                    backToTopBtn.classList.remove('visible');
+                }
+            });
+            backToTopBtn.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        }
     </script>
+    <!-- 回到頂端按鈕 -->
+    <button class="back-to-top" id="back-to-top" aria-label="回到頂端">↑</button>
 </body>
 
 </html>
