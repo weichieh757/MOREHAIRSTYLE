@@ -82,23 +82,9 @@
         </div>
 
 
-        <div class="story-section">
-            <picture class="bg-media">
-                <source media="(max-width: 768px)" srcset="/uploads/2026_m.jpg">
-                <img src="/uploads/2026.jpg" alt="Background">
-            </picture>
-            <div class="overlay"></div>
-            <div class="story-content">
-                <h2 class="story-title">Happy New Year</h2>
-                <p class="story-desc">過年限定優惠組合<br>給自己一份最溫暖的禮物</p>
-            </div>
-        </div>
-
-
-
         <div class="story-section" id="section-professional">
             <picture class="bg-media">
-                <source media="(max-width: 768px)" srcset="/uploads/MOREHAIRSTYLE-m.jpg">
+                <source media="(max-width: 768px)" srcset="/uploads/MOREHAIRSTYLE_m.jpg">
                 <img src="/uploads/MOREHAIRSTYLE.jpg" alt="Background" style="object-position: center center;">
             </picture>
             <div class="overlay"></div>
@@ -158,8 +144,9 @@
 
             const isMobile = window.matchMedia('(max-width: 768px)').matches;
             const source = heroVideo.querySelector('source');
-            const mobileVideoSrc = '/uploads/slide1_m.mp4';
             const desktopVideoSrc = '/uploads/slide1.mp4';
+            // 若名稱沒有特別包含_m的話則手機和網頁版用同一張照片或影片
+            const mobileVideoSrc = '/uploads/slide1.mp4'; 
             const targetSrc = isMobile ? mobileVideoSrc : desktopVideoSrc;
 
             // 只有當來源不同時才重新載入
