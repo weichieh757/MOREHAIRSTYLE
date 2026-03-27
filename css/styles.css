@@ -948,49 +948,63 @@ textarea {
 }
 
 /* ========================================== */
-/* ✨ [Mobile] Category Scroll Bar ✨ */
+/* ✨ Category Scroll Bar (Desktop & Mobile) ✨ */
 /* ========================================== */
 .category-bar {
-    display: none;
+    display: none; /* Managed by JS */
+    overflow-x: auto;
+    gap: 12px;
+    padding: 16px 2rem;
+    background: var(--bg);
+    position: sticky;
+    top: 80px; /* desktop header height */
+    z-index: 100;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    justify-content: center;
+    flex-wrap: wrap;
 }
 
 @media (max-width: 768px) {
     .category-bar {
-        display: flex;
-        overflow-x: auto;
-        gap: 10px;
-        padding: 12px 1rem;
-        background: white;
-        border-bottom: 1px solid #eee;
-        position: sticky;
         top: 60px;
-        z-index: 100;
-        -webkit-overflow-scrolling: touch;
-        scrollbar-width: none;
+        padding: 12px 1rem;
+        justify-content: flex-start;
+        flex-wrap: nowrap;border-bottom: 1px solid #eee;
     }
+}
 
-    .category-bar::-webkit-scrollbar {
-        display: none;
-    }
+.category-bar::-webkit-scrollbar {
+    display: none;
+}
 
-    .category-bar a {
-        flex-shrink: 0;
-        padding: 6px 16px;
-        border: 1px solid #ddd;
-        border-radius: 20px;
-        font-size: 0.85rem;
-        color: #555;
-        white-space: nowrap;
-        transition: all 0.2s;
-        text-decoration: none;
-    }
+.category-bar a {
+    flex-shrink: 0;
+    padding: 8px 20px;
+    border: 2px solid var(--accent);
+    border-radius: 30px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--accent);
+    background: white;
+    white-space: nowrap;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
 
-    .category-bar a:hover,
-    .category-bar a.active {
-        background: var(--accent);
-        color: white;
-        border-color: var(--accent);
-    }
+.category-bar a:hover {
+    background: var(--accent);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.category-bar a.active {
+    background: #e74c3c; /* 跳色/Pop color */
+    color: white;
+    border-color: #e74c3c;
+    box-shadow: 0 4px 10px rgba(231, 76, 60, 0.3);
 }
 
 /* ========================================== */
