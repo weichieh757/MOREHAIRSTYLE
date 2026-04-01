@@ -57,7 +57,7 @@ header {
     justify-content: flex-end;
     /* Default for desktop with full nav */
     align-items: center;
-    position: absolute;
+    position: fixed;
     width: 100%;
     top: 0;
     left: 0;
