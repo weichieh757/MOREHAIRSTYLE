@@ -26,7 +26,7 @@ def init_db():
         CREATE TABLE IF NOT EXISTS orders (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             customer_name TEXT NOT NULL,
-            order_data TEXT NOT NULL,
+            items TEXT NOT NULL,
             total_amount INTEGER NOT NULL,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
@@ -252,7 +252,7 @@ def checkout():
     # 存入資料庫
     conn = get_db_connection()
     cursor = conn.execute('''
-        INSERT INTO orders (customer_name, order_data, total_amount)
+        INSERT INTO orders (customer_name, items, total_amount)
         VALUES (?, ?, ?)
     ''', (customer_name, order_data_json, total_amount))
     order_id = cursor.lastrowid
@@ -274,7 +274,7 @@ def get_orders():
         o_dict = dict(o)
         # 把 JSON 字串轉回 Python 列表
         try:
-            o_dict['order_data'] = json.loads(o['order_data']) if o['order_data'] else []
+            o_dict['order_data'] = json.loads(o['items']) if o['items'] else []
         except:
             o_dict['order_data'] = []
         orders_list.append(o_dict)
