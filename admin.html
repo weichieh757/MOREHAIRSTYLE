@@ -533,6 +533,7 @@
             <button class="tab-btn active" onclick="switchTab('tab-products')">📦 商品管理</button>
             <button class="tab-btn" onclick="switchTab('tab-orders')">📝 訂單管理</button>
             <button class="tab-btn" onclick="switchTab('tab-gallery')">🖼️ 圖片庫管理</button>
+            <button class="tab-btn" onclick="switchTab('tab-contacts')">💌 顧客留言</button>
         </div>
 
         <!-- ✨ 1. 商品管理分頁 ✨ -->
@@ -629,6 +630,15 @@
             </div>
             <p style="color:#666; margin-bottom:1rem;">這裡顯示伺服器上的所有圖片。您可以刪除不再使用的舊圖。</p>
             <div id="galleryManagerGrid" class="gallery-grid">載入中...</div>
+        </div>
+
+        <!-- ✨ 4. 顧客留言分頁 ✨ -->
+        <div id="tab-contacts" class="tab-content">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h2>💌 顧客留言 / 預約列表</h2>
+                <button onclick="loadContacts()" class="btn-gallery">重新整理</button>
+            </div>
+            <div id="contactList" class="product-list">載入中...</div>
         </div>
     </div>
 
@@ -996,8 +1006,42 @@
             }
         }
 
+        // ✨ 顧客留言列表功能 ✨
+        async function loadContacts() {
+            const contactList = document.getElementById('contactList');
+            contactList.innerHTML = '載入中...';
+            try {
+                const res = await fetch('/api/contacts');
+                const contacts = await res.json();
+
+                if (contacts.length === 0) {
+                    contactList.innerHTML = '<p style="color: #999; text-align: center; padding: 2rem;">目前沒有留言</p>';
+                    return;
+                }
+
+                contactList.innerHTML = '';
+                contacts.forEach(contact => {
+                    contactList.innerHTML += `
+                        <div class="product-item" style="flex-wrap: wrap; background: #fafafa; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                            <div style="flex-grow: 1;">
+                                <strong style="color: #e67e22; font-size: 1.1rem;">✉️ ${contact.email}</strong><br>
+                                <p style="margin-top: 8px; color: #444; line-height: 1.5; white-space: pre-wrap;">${contact.message}</p>
+                            </div>
+                            <div style="text-align: right; min-width: 150px;">
+                                <span style="font-size: 0.8rem; color: #999;">${contact.created_at}</span>
+                            </div>
+                        </div>
+                    `;
+                });
+            } catch (e) {
+                console.error("載入留言失敗", e);
+                contactList.innerHTML = '<p style="color: red;">載入留言失敗</p>';
+            }
+        }
+
         loadProducts();
         loadOrders();
+        loadContacts();
 
         // ==========================================
         // ✨ 新增函數：產生位置編輯列 HTML ✨
@@ -1183,9 +1227,11 @@
             });
             document.getElementById(tabId).classList.add('active');
 
-            // 3. 特殊處理：如果是圖片庫 Tab，自動載入
+            // 3. 特殊處理：如果是圖片庫或留言 Tab，自動載入
             if (tabId === 'tab-gallery') {
                 loadGalleryManager();
+            } else if (tabId === 'tab-contacts') {
+                loadContacts();
             }
         }
 

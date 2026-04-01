@@ -32,6 +32,15 @@ def init_db():
         )
     ''')
     
+    conn.execute('''
+        CREATE TABLE IF NOT EXISTS contacts (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            email TEXT NOT NULL,
+            message TEXT NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    ''')
+
     # 確保 products 表有 variants 和 image_positions 欄位
     # 先檢查欄位是否存在，如果不存在就新增
     cursor = conn.execute("PRAGMA table_info(products)")
@@ -271,6 +280,36 @@ def get_orders():
         orders_list.append(o_dict)
     
     return jsonify(orders_list)
+
+# --- 6.5. 顧客聯絡/預約表單 (Contact API) ---
+@app.route('/api/contact', methods=['POST'])
+def submit_contact():
+    data = request.json
+    email = data.get('email', '')
+    message = data.get('message', '')
+    
+    if not email or not message:
+        return jsonify({'status': 'error', 'message': 'Email and message are required'}), 400
+        
+    conn = get_db_connection()
+    conn.execute('''
+        INSERT INTO contacts (email, message)
+        VALUES (?, ?)
+    ''', (email, message))
+    conn.commit()
+    conn.close()
+    
+    print(f"✅ 新顧客聯絡：{email} - {message}")
+    return jsonify({'status': 'success', 'message': 'Contact received'})
+
+@app.route('/api/contacts', methods=['GET'])
+def get_contacts():
+    conn = get_db_connection()
+    contacts = conn.execute('SELECT * FROM contacts ORDER BY created_at DESC').fetchall()
+    conn.close()
+    
+    contacts_list = [dict(c) for c in contacts]
+    return jsonify(contacts_list)
 
 # --- 7. 圖片庫 API ---
 @app.route('/api/images', methods=['GET'])
