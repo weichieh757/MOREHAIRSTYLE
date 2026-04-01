@@ -30,7 +30,6 @@ body {
     background: var(--bg);
     color: var(--primary);
     padding-bottom: 0;
-    overflow-x: hidden;
     line-height: 1.6;
 }
 
@@ -49,7 +48,7 @@ img {
 /* ✨ Header & Navigation ✨ */
 /* ========================================== */
 header {
-    background: transparent;
+    background: rgba(255, 255, 255, 0.3);
     color: var(--accent);
     padding: 0 1.5rem;
     height: 80px;
@@ -62,7 +61,8 @@ header {
     top: 0;
     left: 0;
     z-index: 1000;
-    backdrop-filter: none;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     box-shadow: none;
 }
 
