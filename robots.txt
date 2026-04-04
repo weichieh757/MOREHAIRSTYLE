@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# 請將下方的這行網址，換成您正式的網域（例如 https://more-hairstyle.com.tw/sitemap.xml）
+Sitemap: https://在此填入您的正式網址/sitemap.xml
