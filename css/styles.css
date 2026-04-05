@@ -547,21 +547,25 @@ nav a:hover {
     height: 50px;
     width: auto;
     opacity: 0;
-    transform: translateY(50px) scale(0.9);
-    transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+    /* 讀取 HTML inline style 的隨機變數，創造四散的初始狀態 */
+    transform: translate(var(--tx, 0), var(--ty, 50px)) rotate(var(--r, 0deg)) scale(1.5);
+    /* 加上回彈效果 (Spring) 讓飛入時更生動 */
+    transition: opacity 0.8s ease, transform 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-/* 進入畫面的依序浮現動畫 */
+/* 進入畫面的散落飛入動畫 */
 .story-content.visible .alpha-mao {
     opacity: 1;
     transform: translateY(0);
-    transition-delay: calc(var(--i) * 0.05s);
+    transition-delay: 0s;
 }
 
 .story-content.visible .alpha-letter {
     opacity: 1;
-    transform: translateY(0) scale(1);
-    transition-delay: calc(var(--i) * 0.08s);
+    /* 所有散落的字母飛回到正常位置變成一排 */
+    transform: translate(0, 0) rotate(0deg) scale(1);
+    /* 讓字母在「髦」出現後，依序飛入 */
+    transition-delay: calc(0.3s + var(--i) * 0.06s);
 }
 
 @media (max-width: 768px) {
