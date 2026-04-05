@@ -510,6 +510,76 @@ nav a:hover {
 }
 
 /* ========================================== */
+/* ✨ Alphabet Section ✨ */
+/* ========================================== */
+.alphabet-section {
+    background: #fdfdfd;
+}
+
+.alphabet-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4rem;
+    padding: 0 1rem;
+    max-width: 1000px;
+    /* 覆蓋 .story-content 預設的動畫與透明度 */
+    opacity: 1 !important; 
+    transform: none !important;
+}
+
+.alpha-mao {
+    width: 150px;
+    height: auto;
+    opacity: 0;
+    transform: translateY(50px);
+    transition: opacity 1s ease, transform 1s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.letters-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+}
+
+.alpha-letter {
+    height: 50px;
+    width: auto;
+    opacity: 0;
+    transform: translateY(50px) scale(0.9);
+    transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* 進入畫面的依序浮現動畫 */
+.story-content.visible .alpha-mao {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: calc(var(--i) * 0.05s);
+}
+
+.story-content.visible .alpha-letter {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    transition-delay: calc(var(--i) * 0.08s);
+}
+
+@media (max-width: 768px) {
+    .alphabet-container {
+        gap: 2rem;
+    }
+    .alpha-mao {
+        width: 100px;
+    }
+    .alpha-letter {
+        height: 32px;
+    }
+    .letters-wrapper {
+        gap: 8px;
+    }
+}
+
+/* ========================================== */
 /* ✨ Product Grid & Cards ✨ */
 /* ========================================== */
 #product-section {
