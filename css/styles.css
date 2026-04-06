@@ -581,9 +581,8 @@ nav a:hover {
 
 .welcome-desc {
     font-size: 1.5rem;
-    font-weight: 700;
-    -webkit-text-stroke: 1.5px #444;
-    color: transparent;
+    font-weight: 400;
+    color: #444;
     letter-spacing: 2px;
     text-align: center;
     line-height: 1.8;
@@ -631,7 +630,7 @@ nav a:hover {
     .scatter-letter { height: 40px; }
     .mao-main { width: 90px; }
     .welcome-title { font-size: 1.8rem; letter-spacing: 2px; line-height: 1.5; }
-    .welcome-desc { font-size: 1.2rem; letter-spacing: 1px; -webkit-text-stroke: 1px #444; }
+    .welcome-desc { font-size: 1.2rem; letter-spacing: 1px; }
     .mao-twins { gap: 1rem; }
 }
 
