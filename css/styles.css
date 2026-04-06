@@ -569,8 +569,9 @@ nav a:hover {
 
 .welcome-title {
     font-size: 2.2rem;
-    font-weight: 700;
-    color: var(--accent);
+    font-weight: 900;
+    -webkit-text-stroke: 2px var(--accent);
+    color: transparent;
     letter-spacing: 4px;
     text-align: center;
     line-height: 1.4;
@@ -581,8 +582,9 @@ nav a:hover {
 
 .welcome-desc {
     font-size: 1.2rem;
-    font-weight: 300;
-    color: #444;
+    font-weight: 700;
+    -webkit-text-stroke: 1px #444;
+    color: transparent;
     letter-spacing: 2px;
     text-align: center;
     line-height: 1.8;
