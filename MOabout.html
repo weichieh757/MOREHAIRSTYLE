@@ -65,7 +65,93 @@
       Instagram：@maomeishu<br>
       LINE:0956526063<br>
     </p>
+
+    <!-- 按鈕區塊 -->
+    <div style="text-align: center; margin-top: 4rem; padding-bottom: 2rem;">
+        <p style="margin-bottom: 1.5rem; font-weight: bold; font-size: 1.2rem;">預約及聯絡我們</p>
+        <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+            <button onclick="openContactModal()" class="btn-buy"
+                style="padding: 1rem 3rem; font-size: 1.1rem; display: inline-block; cursor: pointer; border: none;">線上預約 / 留言給我們</button>
+            <a href="https://lin.ee/peMV3SB" target="_blank" class="btn-buy"
+                style="padding: 1rem 2rem; font-size: 1.1rem; background-color: #00B900; display: inline-block; color: white; text-decoration: none;">💬 加 LINE 諮詢</a>
+            <a href="https://www.instagram.com/more_hair.style?igsh=dWRuOGpzcXBrcDJ2&utm_source=qr" target="_blank" class="btn-buy"
+                style="padding: 1rem 2rem; font-size: 1.1rem; background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); display: inline-block; color: white; text-decoration: none;">📷 追蹤 IG</a>
+        </div>
+    </div>
   </main>
+
+  <!-- 聯絡/預約 Modal -->
+  <div id="contactModal" style="display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); align-items: center; justify-content: center;">
+      <div style="background-color: white; padding: 2.5rem; border-radius: 15px; width: 90%; max-width: 500px; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+          <span onclick="closeContactModal()" style="position: absolute; top: 15px; right: 20px; font-size: 28px; cursor: pointer; color: #888;">&times;</span>
+          <h2 style="color: rgb(34, 57, 90); margin-bottom: 1.5rem; text-align: center;">✉️ 聯絡我們 / 線上預約</h2>
+          <form id="contactForm" onsubmit="submitContactForm(event)">
+              <div style="margin-bottom: 1.5rem;">
+                  <label style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: #555;">您的 Email 信箱</label>
+                  <input type="email" id="contactEmail" required placeholder="example@mail.com" style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 1rem; box-sizing: border-box;">
+              </div>
+              <div style="margin-bottom: 1.5rem;">
+                  <label style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: #555;">您想詢問的問題 / 預約時間需求</label>
+                  <textarea id="contactMessage" required rows="5" placeholder="請告訴我們您的需求..." style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 1rem; box-sizing: border-box; resize: vertical;"></textarea>
+              </div>
+              <button type="submit" id="contactSubmitBtn" style="width: 100%; padding: 12px; font-size: 1.1rem; color: white; background-color: rgb(34, 57, 90); border: none; border-radius: 8px; cursor: pointer; transition: background-color 0.3s; font-weight: bold;">確認送出</button>
+          </form>
+          <div id="contactSuccess" style="display: none; text-align: center; color: #27ae60; margin-top: 1rem; font-weight: bold;">✅ 您的訊息已成功送出！我們將會盡快與您聯絡。</div>
+          <div id="contactError" style="display: none; text-align: center; color: #e74c3c; margin-top: 1rem; font-weight: bold;">❌ 發生錯誤，請稍後再試。</div>
+      </div>
+  </div>
+
+  <script>
+      const API_BASE = "https://momohairstyle.onrender.com";
+
+      function openContactModal() {
+          document.getElementById('contactModal').style.display = 'flex';
+          document.body.style.overflow = 'hidden'; 
+      }
+
+      function closeContactModal() {
+          document.getElementById('contactModal').style.display = 'none';
+          document.body.style.overflow = 'auto';
+          document.getElementById('contactSuccess').style.display = 'none';
+          document.getElementById('contactError').style.display = 'none';
+          document.getElementById('contactForm').style.display = 'block';
+          document.getElementById('contactForm').reset();
+          document.getElementById('contactSubmitBtn').disabled = false;
+          document.getElementById('contactSubmitBtn').innerText = "確認送出";
+      }
+
+      async function submitContactForm(event) {
+          event.preventDefault();
+          const btn = document.getElementById('contactSubmitBtn');
+          const email = document.getElementById('contactEmail').value.trim();
+          const message = document.getElementById('contactMessage').value.trim();
+          
+          btn.disabled = true;
+          btn.innerText = "傳送中...";
+          document.getElementById('contactSuccess').style.display = 'none';
+          document.getElementById('contactError').style.display = 'none';
+
+          try {
+              const response = await fetch(`${API_BASE}/api/contact`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ email, message })
+              });
+
+              if (response.ok) {
+                  document.getElementById('contactForm').style.display = 'none';
+                  document.getElementById('contactSuccess').style.display = 'block';
+              } else {
+                  throw new Error('Server error');
+              }
+          } catch (err) {
+              console.error(err);
+              document.getElementById('contactError').style.display = 'block';
+              btn.disabled = false;
+              btn.innerText = "確認送出";
+          }
+      }
+  </script>
   <script type="application/ld+json">
         {
           "@context": "https://schema.org",
