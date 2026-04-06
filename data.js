@@ -12,7 +12,7 @@ window.products = [
         price: 800, 
         category: "洗髮燙髮", // 用於分類過濾
         description: "高效補水、溫和潔淨，適合日常清爽洗髮。", 
-        image: "R.O.8水漾髮浴.jpeg" // 圖片檔名
+        image: "R.O.8水漾髮浴.webp" // 圖片檔名
     },
     { 
         id: 2, 
@@ -20,7 +20,7 @@ window.products = [
         price: 3500, 
         category: "保養", 
         description: "來自日本的AQUA碳酸錠，深層清潔。", 
-        image: "日本AQUA碳酸泉.jpeg" 
+        image: "日本AQUA碳酸泉.webp" 
     },
     { 
         id: 3, 
@@ -28,7 +28,7 @@ window.products = [
         price: 750, 
         category: "保養", 
         description: "深層修護髮絲，注入植物活性成分。", 
-        image: "Proshia.jpeg" 
+        image: "Proshia.webp" 
     },
     { 
         id: 4, 
@@ -36,7 +36,7 @@ window.products = [
         price: 600, 
         category: "染髮", 
         description: "色彩飽和顯色持久，染髮同時護髮。", 
-        image: "染膏.jpeg" 
+        image: "染膏.webp" 
     },
     { 
         id: 5, 
@@ -44,7 +44,7 @@ window.products = [
         price: 700, 
         category: "保養", 
         description: "放鬆頭皮、舒緩壓力，去除老廢角質。", 
-        image: "R.O.8更新凝膠.jpeg" 
+        image: "R.O.8更新凝膠.webp" 
     },
     { 
         id: 6, 
@@ -68,7 +68,7 @@ window.products = [
         price: 780, 
         category: "保養", 
         description: "活萃頭皮滋養。", 
-        image: "頭皮養護.jpeg" 
+        image: "頭皮養護.webp" 
     },
     {
         id: 9, 
@@ -84,9 +84,9 @@ window.products = [
         price: 650,
         // 新增 images 陣列，可以放無限多張
         images: [
-            "IMG_5501.JPG",   // 第一張 (主圖)
-            "IMG_5326.JPG",      // 第二張
-            "IMG_5325.JPG"    // 第三張 
+            "IMG_5501.webp",   // 第一張 (主圖)
+            "IMG_5326.webp",      // 第二張
+            "IMG_5325.webp"    // 第三張 
         ],
         category: "保養", 
         description: "涼。", 
