@@ -540,7 +540,7 @@ nav a:hover {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 15px;
+    gap: 4px;
 }
 
 .alpha-letter {
@@ -579,7 +579,7 @@ nav a:hover {
         height: 32px;
     }
     .letters-wrapper {
-        gap: 8px;
+        gap: 2px;
     }
 }
 

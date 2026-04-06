@@ -258,6 +258,10 @@
                             video.play().catch(e => console.log("自動播放需使用者互動"));
                         }
                     } else {
+                        // 移除文字動畫，讓下次進入可以重複播放
+                        const content = entry.target.querySelector('.story-content');
+                        if (content) content.classList.remove('visible');
+
                         // 3. 影片控制：滑走就暫停
                         if (video) video.pause();
                     }
