@@ -540,7 +540,8 @@ nav a:hover {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 4px;
+    align-items: flex-end; /* 讓所有字母以底部貼齊，像是寫在同一條線上 */
+    gap: 0px; /* 改為 0，讓字母最緊密貼合 */
 }
 
 .alpha-letter {
@@ -579,7 +580,7 @@ nav a:hover {
         height: 32px;
     }
     .letters-wrapper {
-        gap: 2px;
+        gap: 0px;
     }
 }
 
