@@ -568,10 +568,9 @@ nav a:hover {
 }
 
 .welcome-title {
-    font-size: 2.2rem;
+    font-size: 2.8rem;
     font-weight: 900;
-    -webkit-text-stroke: 2px var(--accent);
-    color: transparent;
+    color: var(--accent);
     letter-spacing: 4px;
     text-align: center;
     line-height: 1.4;
@@ -581,9 +580,9 @@ nav a:hover {
 }
 
 .welcome-desc {
-    font-size: 1.2rem;
+    font-size: 1.5rem;
     font-weight: 700;
-    -webkit-text-stroke: 1px #444;
+    -webkit-text-stroke: 1.5px #444;
     color: transparent;
     letter-spacing: 2px;
     text-align: center;
@@ -619,6 +618,10 @@ nav a:hover {
     animation-delay: calc(var(--i) * 0.5s);
 }
 
+.line-float-btn:hover {
+    transform: scale(1.05);
+}
+
 @keyframes gentleScatterFloat {
     0%, 100% { transform: translateY(0) scale(1) rotate(var(--r, 0deg)); }
     50% { transform: translateY(-15px) scale(1.05) rotate(calc(var(--r, 0deg) + 5deg)); }
@@ -627,8 +630,8 @@ nav a:hover {
 @media (max-width: 768px) {
     .scatter-letter { height: 40px; }
     .mao-main { width: 90px; }
-    .welcome-title { font-size: 1.4rem; letter-spacing: 2px; line-height: 1.5; }
-    .welcome-desc { font-size: 1rem; letter-spacing: 1px; }
+    .welcome-title { font-size: 1.8rem; letter-spacing: 2px; line-height: 1.5; }
+    .welcome-desc { font-size: 1.2rem; letter-spacing: 1px; -webkit-text-stroke: 1px #444; }
     .mao-twins { gap: 1rem; }
 }
 
