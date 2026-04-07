@@ -568,7 +568,7 @@ nav a:hover {
 }
 
 .welcome-title {
-    font-size: 2.8rem;
+    font-size: 3.5rem;
     font-weight: 900;
     color: var(--accent);
     letter-spacing: 4px;
@@ -580,8 +580,8 @@ nav a:hover {
 }
 
 .welcome-desc {
-    font-size: 1.5rem;
-    font-weight: 400;
+    font-size: 1.8rem;
+    font-weight: 600;
     color: #444;
     letter-spacing: 2px;
     text-align: center;
@@ -593,13 +593,13 @@ nav a:hover {
 
 /* Scroll Animation Triggered via .visible */
 .story-content.visible .scatter-letter {
-    opacity: 0.6; /* 半透明以襯托中央內容 */
+    opacity: 0.15; /* 半透明以襯托中央內容 */
     transform: scale(1) rotate(var(--r, 0deg));
     transition-delay: calc(var(--i) * 0.05s);
 }
 
 .story-content.visible .mao-main {
-    opacity: 1;
+    opacity: 0.3;
     transform: translateY(0) scale(1);
     transition-delay: calc(var(--i) * 0.05s);
 }
@@ -629,8 +629,8 @@ nav a:hover {
 @media (max-width: 768px) {
     .scatter-letter { height: 40px; }
     .mao-main { width: 90px; }
-    .welcome-title { font-size: 1.8rem; letter-spacing: 2px; line-height: 1.5; }
-    .welcome-desc { font-size: 1.2rem; letter-spacing: 1px; }
+    .welcome-title { font-size: 2.2rem; letter-spacing: 2px; line-height: 1.5; }
+    .welcome-desc { font-size: 1.4rem; font-weight: 600; letter-spacing: 1px; }
     .mao-twins { gap: 1rem; }
 }
 
