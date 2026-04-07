@@ -627,6 +627,7 @@ nav a:hover {
 }
 
 @media (max-width: 768px) {
+    .desktop-only { display: none !important; }
     .scatter-letter { height: 40px; }
     .mao-main { width: 90px; }
     .welcome-title { font-size: 2.2rem; letter-spacing: 2px; line-height: 1.5; }
