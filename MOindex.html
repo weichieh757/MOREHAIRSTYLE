@@ -4,6 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtag/js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-XXXXXXX');</script>
+    <!-- End Google Tag Manager -->
 
     <title>髦 MORE HAIRSTYLE | 台南專業髮廊與頂級護髮產品</title>
     <meta name="description" content="台南安平區推薦髮廊 MORE HAIRSTYLE。提供專業剪髮、染髮、燙髮服務，並販售 R.O.8、日本AQUA碳酸泉等頂級沙龍專用洗髮精與護髮產品。">
@@ -21,6 +28,8 @@
         rel="stylesheet">
 
     <link rel="stylesheet" href="css/styles.css">
+    <!-- AOS.js CSS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <!-- Inline style block removed in favor of css/styles.css -->
     <!-- Favicon 網頁圖示與手機桌面圖示 -->
     <link rel="icon" href="/uploads/髦.png" type="image/png">
@@ -88,6 +97,10 @@
 </head>
 
 <body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-XXXXXXX"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
     <header>
         <!-- Logo (原本是置中，手機版改左邊) -->
         <h1><a href="MOindex.html">MORE HAIRSTYLE</a></h1>
@@ -128,7 +141,7 @@
     <div id="home-banner">
 
 
-        <div class="story-section alphabet-section">
+        <div class="story-section alphabet-section" data-aos="fade-in">
             <div class="story-content center-popup">
                 <!-- 背景散落字母 -->
                 <div class="scattered-bg">
@@ -190,7 +203,7 @@
             </div>
         </div>
 
-        <div class="story-section">
+        <div class="story-section" data-aos="fade-up">
             <picture class="bg-media">
                 <source media="(max-width: 768px)" srcset="/uploads/水底碳酸_m.png">
                 <img src="/uploads/水底碳酸.png" alt="日本 AQUA 高濃度碳酸泉 - 頭皮深層清潔養護">
@@ -503,6 +516,15 @@
     <a href="https://lin.ee/peMV3SB" target="_blank" class="line-float-btn" style="position: fixed; bottom: 20px; left: 20px; z-index: 1000; transition: transform 0.3s ease;">
         <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/LINE_logo.svg" alt="加 LINE 諮詢" width="50" height="50" style="box-shadow: 0 4px 12px rgba(0,0,0,0.25); border-radius: 14px; background: white; padding: 3px;">
     </a>
+    <!-- AOS.js JS -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 1000,
+            once: true,
+            offset: 100
+        });
+    </script>
 </body>
 
 </html>

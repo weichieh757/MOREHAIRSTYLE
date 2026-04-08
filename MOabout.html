@@ -4,10 +4,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtag/js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-XXXXXXX');</script>
+  <!-- End Google Tag Manager -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
   <title>關於我們 - MORE HAIRSTYLE</title>
   <link rel="stylesheet" href="css/styles.css">
+  <!-- AOS.js CSS -->
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
   <!-- Shared styles moved to css/styles.css -->
     <!-- Favicon 網頁圖示與手機桌面圖示 -->
     <link rel="icon" href="/uploads/髦.png" type="image/png">
@@ -49,12 +58,16 @@
 </head>
 
 <body>
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-XXXXXXX"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
   <header class="spread">
     <h1><a href="MOindex.html">MORE HAIRSTYLE</a></h1>
     <nav><a href="MOindex.html">← 回首頁</a></nav>
   </header>
 
-  <main class="container">
+  <main class="container" data-aos="fade-up">
     <h2 style="text-align: center; margin-bottom: 1rem;">關於我們</h2>
     <img src="/uploads/MOREHAIRSTYLE.webp" class="about-img" onerror="this.style.display='none'">
 
@@ -190,6 +203,11 @@
           "url": "https://www.yourwebsite.com/MOindex.html"
         }
         </script>
+  <!-- AOS.js JS -->
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>
+      AOS.init({ duration: 1000, once: true });
+  </script>
 </body>
 
 </html>

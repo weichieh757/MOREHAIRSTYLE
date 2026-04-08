@@ -4,6 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtag/js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-XXXXXXX');</script>
+    <!-- End Google Tag Manager -->
     <title>商品詳情 - MORE HAIRSTYLE</title>
     <meta name="description" content="台南安平區推薦髮廊 MORE HAIRSTYLE。提供專業剪髮、染髮、燙髮服務，並販售 R.O.8、日本AQUA碳酸泉等頂級沙龍專用洗髮精與護髮產品。">
     <meta name="keywords" content="台南髮廊, 安平剪髮, 護髮產品, 洗髮精推薦, MORE HAIRSTYLE, R.O.8, 染髮推薦">
@@ -19,6 +26,10 @@
         rel="stylesheet">
 
     <link rel="stylesheet" href="css/styles.css">
+    <!-- AOS.js CSS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <!-- Swiper.js CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
     <!-- Shared styles moved to css/styles.css -->
     <!-- Favicon 網頁圖示與手機桌面圖示 -->
     <link rel="icon" href="/uploads/髦.png" type="image/png">
@@ -60,6 +71,10 @@
 </head>
 
 <body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-XXXXXXX"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
     <header>
         <h1><a href="MOindex.html">MORE HAIRSTYLE</a></h1>
         <nav>
@@ -74,85 +89,12 @@
         <div id="loading" style="text-align: center; padding: 50px;">
             <h3>資料載入中...</h3>
         </div>
-        <div id="product-detail" class="detail-card" style="display: none;"></div>
+        <div id="product-detail" class="detail-card" style="display: none;" data-aos="fade-up"></div>
     </main>
 
     <script>
-        let slideIndex = 1;
-        let autoSlideTimer;
+        let swiper;
         let currentProduct = null;
-
-        let selectedS1 = null;
-        let selectedS2 = null;
-        let finalPrice = 0;
-
-        function updateCartCount() {
-            const cart = JSON.parse(localStorage.getItem('momoCart')) || [];
-            const count = cart.reduce((sum, item) => sum + item.quantity, 0);
-            document.getElementById('cart-count').innerText = count;
-        }
-
-        function addToCart() {
-            if (!currentProduct) return;
-
-            if (currentProduct.variants && currentProduct.variants.length > 0) {
-                const s1Btns = document.querySelectorAll('.group-s1 .variant-btn');
-                if (s1Btns.length > 0 && !selectedS1) {
-                    alert("請選擇規格"); return;
-                }
-                const s2Btns = document.querySelectorAll('.group-s2 .variant-btn');
-                if (s2Btns.length > 0 && !selectedS2) {
-                    const hasS2Options = currentProduct.variants.some(v => v.s1 === selectedS1 && v.s2);
-                    if (hasS2Options) {
-                        alert("請選擇尺寸/規格二"); return;
-                    }
-                }
-            }
-
-            let variantName = "";
-            if (selectedS1) variantName += selectedS1;
-            if (selectedS2) variantName += " " + selectedS2;
-
-            let cart = JSON.parse(localStorage.getItem('momoCart')) || [];
-            const existingItem = cart.find(item => item.id === currentProduct.id && item.variant === variantName);
-
-            if (existingItem) {
-                existingItem.quantity += 1;
-            } else {
-                cart.push({
-                    id: currentProduct.id,
-                    name: currentProduct.name,
-                    price: finalPrice,
-                    image: currentProduct.image,
-                    variant: variantName,
-                    quantity: 1
-                });
-            }
-
-            localStorage.setItem('momoCart', JSON.stringify(cart));
-            updateCartCount();
-
-            if (confirm('已加入購物車！是否前往結帳？')) {
-                window.location.href = 'MOcart.html';
-            }
-        }
-
-        function plusSlides(n) { showSlides(slideIndex += n); resetAutoSlide(); }
-        function currentSlide(n) { showSlides(slideIndex = n); resetAutoSlide(); }
-        function showSlides(n) {
-            let slides = document.getElementsByClassName("slide-img");
-            let dots = document.getElementsByClassName("dot");
-            if (slides.length === 0) return;
-            if (n > slides.length) slideIndex = 1;
-            if (n < 1) slideIndex = slides.length;
-            for (let i = 0; i < slides.length; i++) { slides[i].style.display = "none"; slides[i].classList.remove("active-slide"); }
-            for (let i = 0; i < dots.length; i++) { dots[i].className = dots[i].className.replace(" active-dot", ""); }
-            slides[slideIndex - 1].style.display = "block";
-            slides[slideIndex - 1].classList.add("active-slide");
-            if (dots.length > 0) dots[slideIndex - 1].className += " active-dot";
-        }
-        function startAutoSlide() { autoSlideTimer = setInterval(function () { plusSlides(1); }, 3000); }
-        function resetAutoSlide() { clearInterval(autoSlideTimer); startAutoSlide(); }
 
         async function fetchProductDetail() {
             const params = new URLSearchParams(window.location.search);
@@ -177,16 +119,22 @@
             let posList = (product.image_positions && product.image_positions.length > 0) ? product.image_positions : Array(imageList.length).fill('center center');
             let rotList = (product.image_rotations && product.image_rotations.length > 0) ? product.image_rotations : Array(imageList.length).fill(0);
 
-            let imagesHtml = ''; let dotsHtml = '';
+            let slidesHtml = '';
             imageList.forEach((img, index) => {
                 const positionStyle = `object-position: ${posList[index] || 'center center'};`;
                 const rotationStyle = `transform: rotate(${rotList[index] || 0}deg);`;
 
-                // 注意：旋轉可能會導致圖片超出邊界，父容器 slides 應該要有 overflow:hidden (CSS已在styles.css設定)
-                imagesHtml += `<img src="${img}" class="slide-img ${index === 0 ? 'active-slide' : ''}" style="${positionStyle} ${rotationStyle}" onerror="this.src='https://placehold.co/500x500?text=No+Image'">`;
-                dotsHtml += `<span class="dot ${index === 0 ? 'active-dot' : ''}" onclick="currentSlide(${index + 1})"></span>`;
+                slidesHtml += `
+                    <div class="swiper-slide">
+                        <img src="${img}" class="slide-img" style="${positionStyle} ${rotationStyle}" onerror="this.src='https://placehold.co/500x500?text=No+Image'">
+                    </div>`;
             });
-            let controlsHtml = imageList.length > 1 ? `<a class="prev" onclick="plusSlides(-1)">❮</a><a class="next" onclick="plusSlides(1)">❯</a><div class="dot-container">${dotsHtml}</div>` : '';
+
+            let swiperControls = imageList.length > 1 ? `
+                <div class="swiper-pagination"></div>
+                <div class="swiper-button-prev"></div>
+                <div class="swiper-button-next"></div>
+            ` : '';
 
             // 規格介面
             let variantHtml = '';
@@ -203,7 +151,10 @@
             }
 
             const detailHtml = `
-                <div class="slideshow-container">${imagesHtml}${controlsHtml}</div>
+                <div class="swiper product-swiper">
+                    <div class="swiper-wrapper">${slidesHtml}</div>
+                    ${swiperControls}
+                </div>
                 <div class="info-col">
                     <h2 style="font-size: 2rem; margin-bottom: 0.5rem;">${product.name}</h2>
                     <div id="price-display" style="color: #db6d00; font-size: 1.8rem; font-weight: bold; margin-bottom: 1rem;">
@@ -220,7 +171,14 @@
             document.getElementById('loading').style.display = 'none';
             detailContainer.style.display = 'flex';
 
-            if (imageList.length > 1) { showSlides(1); startAutoSlide(); }
+            if (imageList.length > 1) {
+                swiper = new Swiper('.product-swiper', {
+                    loop: true,
+                    pagination: { el: '.swiper-pagination', clickable: true },
+                    navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
+                    autoplay: { delay: 3000, disableOnInteraction: false },
+                });
+            }
             // ✨ 1. 動態修改瀏覽器標題與描述 ✨
             document.title = `${product.name} - MORE HAIRSTYLE`;
 
@@ -338,6 +296,13 @@
             updateCartCount();
             fetchProductDetail();
         };
+    </script>
+    <!-- AOS.js JS -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <!-- Swiper.js JS -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script>
+        AOS.init({ duration: 1000, once: true });
     </script>
 </body>
 
