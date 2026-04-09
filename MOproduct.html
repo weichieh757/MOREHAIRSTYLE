@@ -292,6 +292,67 @@
             }
         }
 
+        // 加入購物車邏輯
+        function addToCart() {
+            if (!currentProduct) return;
+            const hasVariants = currentProduct.variants && currentProduct.variants.length > 0;
+            
+            if (hasVariants) {
+                if (!window.selectedS1) {
+                    alert('請先選擇規格！');
+                    return;
+                }
+                const relatedVariants = currentProduct.variants.filter(v => v.s1 === window.selectedS1);
+                const requireS2 = relatedVariants.some(v => v.s2);
+                if (requireS2 && !window.selectedS2) {
+                    alert('請完整選擇第二層規格！');
+                    return;
+                }
+            }
+
+            const cart = JSON.parse(localStorage.getItem('momoCart')) || [];
+            let itemPrice = currentProduct.price;
+            if (typeof finalPrice !== 'undefined') {
+                itemPrice = finalPrice;
+            }
+
+            const cartItem = {
+                id: currentProduct.id,
+                name: currentProduct.name,
+                price: itemPrice,
+                image: (currentProduct.images && currentProduct.images.length > 0) ? currentProduct.images[0] : currentProduct.image,
+                s1: window.selectedS1 || null,
+                s2: window.selectedS2 || null,
+                quantity: 1
+            };
+
+            const existIndex = cart.findIndex(item => 
+                item.id === cartItem.id && 
+                item.s1 === cartItem.s1 && 
+                item.s2 === cartItem.s2
+            );
+
+            if (existIndex > -1) {
+                cart[existIndex].quantity += 1;
+            } else {
+                cart.push(cartItem);
+            }
+            
+            localStorage.setItem('momoCart', JSON.stringify(cart));
+            updateCartCount();
+            alert('成功加入購物車！');
+        }
+
+        // 更新購物車數量顯示
+        function updateCartCount() {
+            const cart = JSON.parse(localStorage.getItem('momoCart')) || [];
+            const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+            const counterElement = document.getElementById('cart-count');
+            if (counterElement) {
+                counterElement.innerText = count;
+            }
+        }
+
         window.onload = function () {
             updateCartCount();
             fetchProductDetail();
