@@ -622,6 +622,7 @@ nav a:hover {
     mask-image: url("/uploads/髦.svg");
     mask-size: 100% 100%;
     background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,0.95) 50%, transparent 70%);
+    background-position: 150% 0;
     background-size: 250% 100%;
     background-repeat: no-repeat;
     animation: shineSweep 4s infinite linear;
