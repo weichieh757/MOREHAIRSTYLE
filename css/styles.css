@@ -599,7 +599,7 @@ nav a:hover {
 }
 
 /* Scroll Animation Triggered via .visible */
-.story-content.visible .scatter-letter {
+.story-content.visible ~ .scattered-bg .scatter-letter {
     opacity: 0.15; /* 半透明以襯托中央內容 */
     transform: scale(1) rotate(var(--r, 0deg));
     transition-delay: calc(var(--i) * 0.05s);
