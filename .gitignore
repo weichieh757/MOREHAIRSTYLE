@@ -17,3 +17,5 @@ venv/
 # Uploads (Enabled for Demo)
 # uploads/
 # 上傳/
+
+credentials.json

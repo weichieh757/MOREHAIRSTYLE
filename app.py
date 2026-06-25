@@ -347,6 +347,68 @@ def delete_image():
 def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
+import os
+import json
+from datetime import datetime
+from flask import Flask, request, jsonify, render_template  # 確保有匯入這些
+import gspread
+from google.oauth2.service_account import Credentials
+
+# ... 你原本的 Flask app 初始化程式碼 (例如 app = Flask(__name__)) ...
+
+# ==================== Google Sheets 串接設定 ====================
+def get_sheets_client():
+    """ 安全讀取金鑰並取得 Google 授權 """
+    scopes = [
+        "https://www.googleapis.com/auth/spreadsheets",
+        "https://www.googleapis.com/auth/drive"
+    ]
+    
+    # 優先從 Render 環境變數讀取
+    env_creds = os.environ.get("GOOGLE_CREDENTIALS_JSON")
+    if env_creds:
+        creds_dict = json.loads(env_creds)
+        creds = Credentials.from_service_account_info(creds_dict, scopes=scopes)
+    else:
+        # 本地開發：讀取剛剛放好的實體檔案
+        creds = Credentials.from_service_account_file("credentials.json", scopes=scopes)
+        
+    return gspread.authorize(creds)
+
+# ==================== 接收前端表單的路由 ====================
+@app.route('/submit_order', methods=['POST'])
+def submit_order():
+    try:
+        # 1. 接收前端表單傳來的資料 (根據前端 input 的 name 屬性)
+        customer_name = request.form.get('name')
+        phone = request.form.get('phone')
+        service_type = request.form.get('service')
+        
+        # 檢查資料是否齊全
+        if not customer_name or not phone:
+            return "請填寫姓名與電話！", 400
+
+        # 2. 連接 Google 試算表
+        client = get_sheets_client()
+        
+        # 開啟你的 Google 試算表 (請確保你已經把試算表「共用」給 JSON 檔裡的機器人 Email)
+        # 括號內填入你的 Google 試算表精確名稱
+        sheet = client.open("線上訂單後台").sheet1
+        
+        # 3. 準備資料列（加入當前時間）
+        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        row_data = [current_time, customer_name, phone, service_type]
+        
+        # 4. 寫入試算表最後一行
+        sheet.append_row(row_data)
+        
+        # 5. 成功後引導客戶去感謝頁面，或是直接彈出訊息
+        return "🎉 預約資料已成功送出！我們將會盡快與您聯絡確認細節。"
+        
+    except Exception as e:
+        print(f"系統發生錯誤: {e}")
+        return f"送出失敗，請稍後再試。錯誤原因: {e}", 500
+        
 if __name__ == '__main__':
     # 使用環境變數的 PORT，預設 5001
     port = int(os.environ.get('PORT', 5001))
