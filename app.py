@@ -408,7 +408,7 @@ def submit_order():
     except Exception as e:
         print(f"系統發生錯誤: {e}")
         return f"送出失敗，請稍後再試。錯誤原因: {e}", 500
-        
+
 if __name__ == '__main__':
     # 使用環境變數的 PORT，預設 5001
     port = int(os.environ.get('PORT', 5001))
