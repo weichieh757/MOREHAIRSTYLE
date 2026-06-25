@@ -83,19 +83,19 @@ init_db()
 # --- 頁面路由 ---
 @app.route('/')
 def home():
-    return send_from_directory('.', 'MOindex.html')
+    return send_from_directory('.', 'index.html')
 
 @app.route('/about')
 def about():
-    return send_from_directory('.', 'MOabout.html')
+    return send_from_directory('.', 'about.html')
 
 @app.route('/product')
-def product(): # Note: Filename is MOproduct.html but route is /product usually
-    return send_from_directory('.', 'MOproduct.html')
+def product(): # Note: Filename is product.html but route is /product usually
+    return send_from_directory('.', 'product.html')
 
 @app.route('/cart')
 def cart():
-    return send_from_directory('.', 'MOcart.html')
+    return send_from_directory('.', 'cart.html')
 
 @app.route('/admin')
 def admin_page():
