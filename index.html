@@ -229,13 +229,12 @@
     </main>
 
     <section id="booking-section" class="container"
-        style="padding: 4rem 1rem; margin-top: 3rem; margin-bottom: 3rem; background-color: #fafafa; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+        style="display: none; padding: 4rem 1rem; margin-top: 3rem; margin-bottom: 3rem; background-color: #fafafa; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
         <h2 style="text-align: center; margin-bottom: 1rem; color: #333; font-weight: 500;">預約諮詢 / 聯絡我們</h2>
         <p style="text-align: center; margin-bottom: 2rem; color: #666; font-size: 0.9rem;">填寫下方表單，我們將由專人與您聯繫確認細節。</p>
 
         <form action="/submit_order" method="POST"
             style="max-width: 500px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px;">
-
             <div>
                 <label for="name"
                     style="display: block; margin-bottom: 8px; font-weight: 500; color: #444;">您的姓名：</label>
@@ -277,9 +276,6 @@
             document.getElementById('cart-count').innerText = count;
         }
 
-        // ==========================================
-        // ✨ [響應式影片] 根據螢幕大小切換影片來源 ✨
-        // ==========================================
         function setupResponsiveVideo() {
             const heroVideo = document.getElementById('hero-video');
             if (!heroVideo) return;
@@ -298,9 +294,6 @@
 
         window.addEventListener('resize', setupResponsiveVideo);
 
-        // ==========================================
-        // ✨ [滾動偵測] 文字浮現 & 影片播放控制 ✨
-        // ==========================================
         function initScrollAnimation() {
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
@@ -345,7 +338,7 @@
 
             const bannerSection = document.getElementById('home-banner');
             const productSection = document.getElementById('product-section');
-            const container = document.getElementById('product-grid');
+            const bookingSection = document.getElementById('booking-section'); // 抓取表單區塊
 
             const categoryOrder = [
                 "洗髮", "染髮", "燙髮", "保養", "煥采",
@@ -353,9 +346,11 @@
             ];
 
             if (category) {
+                // 進入商品頁模式：關閉捲動捕捉，顯示商品，同時【顯示表單】
                 document.documentElement.classList.remove('snap-active');
                 bannerSection.style.display = 'none';
                 productSection.style.display = 'block';
+                if (bookingSection) bookingSection.style.display = 'block';
 
                 let displayList = [];
 
@@ -384,7 +379,7 @@
                 }
 
                 if (displayList.length === 0) {
-                    container.innerHTML = '<p style="grid-column: 1/-1; text-align:center;">此分類尚無商品</p>';
+                    document.getElementById('product-grid').innerHTML = '<p style="grid-column: 1/-1; text-align:center;">此分類尚無商品</p>';
                     return;
                 }
 
@@ -412,12 +407,14 @@
                         </div>
                     `;
                 });
-                container.innerHTML = html;
+                document.getElementById('product-grid').innerHTML = html;
 
             } else {
+                // 首頁全螢幕模式：開啟捲動捕捉，顯示橫幅，【隱藏表單】避免卡住
                 document.documentElement.classList.add('snap-active');
                 bannerSection.style.display = 'block';
                 productSection.style.display = 'none';
+                if (bookingSection) bookingSection.style.display = 'none';
                 initScrollAnimation();
             }
 
