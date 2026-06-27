@@ -11,4 +11,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Ping Website
-        run: curl -s https://momohairstyle.onrender.com > /dev/null
+        run: curl -s https://morehairstyle.com > /dev/null
