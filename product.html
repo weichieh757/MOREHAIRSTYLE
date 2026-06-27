@@ -21,6 +21,7 @@
     <meta property="og:image" content="/uploads/shop.db.webp">
     <meta property="og:url" content="https://morehairstyle.com">
     <meta property="og:type" content="website">
+    <link rel="canonical" id="canonical-link" href="https://morehairstyle.com/product.html">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap"
         rel="stylesheet">
@@ -190,7 +191,36 @@
                 document.head.appendChild(metaDesc);
             }
             // 擷取前 150 個字作為描述
-            metaDesc.content = product.description.substring(0, 150) + "...";
+            const descExcerpt = product.description.substring(0, 150) + "...";
+            metaDesc.content = descExcerpt;
+
+            // ✨ 1.2 動態修改 Canonical 連結與 Open Graph 標籤，加強 SEO 與社群分享 ✨
+            const productId = product.id || new URLSearchParams(window.location.search).get('id');
+            const canonicalUrl = `https://morehairstyle.com/product.html?id=${productId}`;
+            
+            let linkCanonical = document.getElementById('canonical-link');
+            if (linkCanonical) {
+                linkCanonical.href = canonicalUrl;
+            }
+
+            let ogUrl = document.querySelector('meta[property="og:url"]');
+            if (ogUrl) ogUrl.content = canonicalUrl;
+
+            let ogTitle = document.querySelector('meta[property="og:title"]');
+            if (ogTitle) ogTitle.content = `${product.name} - MORE HAIRSTYLE`;
+
+            let ogDesc = document.querySelector('meta[property="og:description"]');
+            if (ogDesc) ogDesc.content = descExcerpt;
+
+            let ogImage = document.querySelector('meta[property="og:image"]');
+            if (ogImage && imageList.length > 0) {
+                // 如果是相對路徑，轉為絕對網址以供社群讀取
+                let imgUrl = imageList[0];
+                if (imgUrl.startsWith('/')) {
+                    imgUrl = 'https://morehairstyle.com' + imgUrl;
+                }
+                ogImage.content = imgUrl;
+            }
 
             // ✨ 2. 插入 Google 結構化資料 (JSON-LD) ✨
             // 這會讓 Google 搜尋結果顯示：價格、幣別、庫存狀態
