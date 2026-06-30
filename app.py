@@ -101,6 +101,10 @@ def cart():
 def admin_page():
     return send_from_directory('.', 'admin.html')
 
+@app.route('/aqua')
+def aqua():
+    return send_from_directory('.', 'aqua.html')
+
 
 # --- 1. 取得所有商品 (API) ---
 @app.route('/api/products', methods=['GET'])
